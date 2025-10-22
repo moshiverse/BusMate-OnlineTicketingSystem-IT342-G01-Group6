@@ -1,4 +1,4 @@
-# Project Title & Short Description
+# BusMate-OnlineTicketingSystem
 
 BusMate is a web-based intercity bus ticketing system that provides a modern, convenient, and contactless travel booking experience. It allows commuters to search bus routes, select seats in real time, pay securely through GoTyme, GCash, or InstaPay, and receive QR-coded e-tickets for smooth boarding.
 The system also includes an admin dashboard for bus operators to manage routes, buses, schedules, and view detailed performance analytics.
@@ -32,30 +32,6 @@ The system also includes an admin dashboard for bus operators to manage routes, 
 - **Build Tool:** Maven
 
 ---
-
-## Project Structure
-```
-oauth2-integration/
-├── src/
-│   └── main/
-│       ├── java/edu/cit/johnjosephlaborada/oauth2integration/
-│       │   ├── Oauth2IntegrationApplication.java
-│       │   ├── config/
-│       │   ├── controller/
-│       │   ├── service/
-│       │   ├── model/
-│       │   └── repository/
-│       └── resources/
-│           ├── templates/
-│           │   ├── home.html
-│           │   └── profile.html
-│           ├── static/
-│           └── application.properties
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-└── README.md
-```
 
 ## Getting Started
 
@@ -153,6 +129,9 @@ spring.datasource.password=
 
 ## Team Members
 **Joshua Noel D. Lo - Mobile Developer - joshuanoel.lo@cit.edu**
+
 **John Joseph A. Laborada - Web Developer - johnjoseph.laborada@cit.edu**
+
 **Nathan Xander Lada - Mobile Developer - nathanxander.lada@cit.edu**
+
 **Jose Raphael R. Lawas - Mobile Developer - joseraphael.lawas@cit.edu**
