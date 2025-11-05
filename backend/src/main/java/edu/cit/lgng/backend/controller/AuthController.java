@@ -1,18 +1,18 @@
 package edu.cit.lgng.backend.controller;
 
+import edu.cit.lgng.backend.config.JwtUtil;
+import edu.cit.lgng.backend.dto.LoginResponseDto;
 import edu.cit.lgng.backend.dto.UserInfoDto;
 import edu.cit.lgng.backend.dto.UserPublicDto;
 import edu.cit.lgng.backend.model.User;
-import edu.cit.lgng.backend.model.User.Role;
 import edu.cit.lgng.backend.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,60 +25,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager; // <-- ADD THIS LINE
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
         User user = userService.signup(body.get("name"), body.get("email"), body.get("password"));
-        return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
+        String token = jwtUtil.generateToken(user);
+
+        UserInfoDto userInfo = new UserInfoDto(user.getId(), user.getName(), user.getEmail());
+        LoginResponseDto response = new LoginResponseDto(token, userInfo);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body, HttpServletRequest request) {
-        User user = userService.login(body.get("email"), body.get("password"));
-
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                user, null, List.of(new SimpleGrantedAuthority(user.getRole().name()))
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(body.get("email"), body.get("password"))
         );
-        SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // persist authentication in session
-        request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        final User user = userService.findByEmail(body.get("email"));
+        final String token = jwtUtil.generateToken(user);
 
-        return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
+        UserInfoDto userInfo = new UserInfoDto(user.getId(), user.getName(), user.getEmail());
+        LoginResponseDto response = new LoginResponseDto(token, userInfo);
+
+        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(Authentication auth) {
-        if (auth == null || !auth.isAuthenticated())
-            return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
-
-        Object principal = auth.getPrincipal();
-
-        // case: manual login where we stored the User object as principal
-        if (principal instanceof edu.cit.lgng.backend.model.User u) {
-            return ResponseEntity.ok(new UserInfoDto(u.getId(), u.getName(), u.getEmail()));
-        }
-
-        // case: we stored DefaultOAuth2User mapped by OAuth2LoginSuccessHandler
-        if (principal instanceof DefaultOAuth2User oUser) {
-            String email = oUser.getAttribute("email");
-            String name = oUser.getAttribute("name");
-            User user = userService.findOrCreateUser(email, name);
-            return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
-        }
-
-        // case: principal is UsernamePasswordAuthenticationToken wrapping DefaultOAuth2User
-        if (auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User springUser) {
-            // optional: map to your DB user by username (which may be email)
-            String email = springUser.getUsername();
-            User user = userService.findByEmail(email);
-            return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
-        }
-
-        return ResponseEntity.badRequest().body(Map.of("error", "Unsupported authentication type"));
+    public ResponseEntity<?> me(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.findByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
     }
-
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/users")
@@ -103,7 +85,8 @@ public class AuthController {
             @RequestParam String role,
             Authentication auth
     ) {
-        User acting = userService.findByEmail(((DefaultOAuth2User) auth.getPrincipal()).getAttribute("email"));
+        String email = getEmailFromAuth(auth);
+        User acting = userService.findByEmail(email);
         User.Role newRole = User.Role.valueOf(role.toUpperCase());
         User updated = userService.updateUserRole(id, newRole, acting);
         return ResponseEntity.ok(Map.of("message", "Role updated", "newRole", updated.getRole().name()));
@@ -127,7 +110,7 @@ public class AuthController {
         Object p = auth.getPrincipal();
         if (p instanceof DefaultOAuth2User o) return o.getAttribute("email");
         if (p instanceof User u) return u.getEmail();
-        if (p instanceof org.springframework.security.core.userdetails.User su) return su.getUsername();
+        if (p instanceof UserDetails su) return su.getUsername();
         return null;
     }
 }
