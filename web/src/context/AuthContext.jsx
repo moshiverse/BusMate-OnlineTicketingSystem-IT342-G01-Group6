@@ -23,21 +23,25 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-    const response = await authAPI.login(credentials);
-    await checkAuth();
-    return response.data;
-  };
+  const response = await authAPI.login(credentials);
+  localStorage.setItem("token", response.data.token);
+  await checkAuth();
+  return response.data;
+};
 
-  const signup = async (data) => {
-    const response = await authAPI.signup(data);
-    await checkAuth();
-    return response.data;
-  };
+const signup = async (data) => {
+  const response = await authAPI.signup(data);
+  localStorage.setItem("token", response.data.token);
+  await checkAuth();
+  return response.data;
+};
 
-  const logout = () => {
-    setUser(null);
-    window.location.href = '/login';
-  };
+
+const logout = () => {
+  localStorage.removeItem("token");
+  setUser(null);
+  window.location.href = '/login';
+};
 
   return (
     <AuthContext.Provider value={{ user, loading, login, signup, logout, checkAuth }}>

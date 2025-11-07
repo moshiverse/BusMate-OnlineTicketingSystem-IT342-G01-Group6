@@ -26,17 +26,17 @@ const SignupForm = () => {
     }
     
     try {
-      await signup({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
-      navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed');
-    } finally {
-      setLoading(false);
-    }
+  await signup({
+  name: formData.name,
+  email: formData.email,
+  password: formData.password
+});
+  navigate('/');
+  } catch (err) {
+  setError(err.response?.data?.error || 'Signup failed');
+  } finally {
+  setLoading(false);
+  }
   };
 
   const handleChange = (e) => {
