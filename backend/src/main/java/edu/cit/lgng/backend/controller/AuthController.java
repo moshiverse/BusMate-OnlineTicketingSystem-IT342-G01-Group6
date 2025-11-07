@@ -58,7 +58,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
 
-        // If user is not logged in or token is missing
+
         if (authentication == null ||
                 !authentication.isAuthenticated() ||
                 authentication.getPrincipal().equals("anonymousUser")) {
