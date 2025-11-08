@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager; // <-- ADD THIS LINE
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
@@ -57,8 +57,27 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.findByEmail(userDetails.getUsername());
+
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication.getPrincipal().equals("anonymousUser")) {
+
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof User) {
+            email = ((User) principal).getEmail();
+        } else {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+
+        User user = userService.findByEmail(email);
         return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
     }
 
