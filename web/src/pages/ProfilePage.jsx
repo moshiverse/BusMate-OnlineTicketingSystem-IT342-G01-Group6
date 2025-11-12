@@ -1,5 +1,3 @@
-// File: src/pages/ProfilePage.jsx
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../api/axios';
@@ -78,26 +76,17 @@ const ProfilePage = () => {
           <div className="profile-info">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3>Account Info</h3>
-              <div>
-                <button
-                  onClick={() => {
-                    setIsEditing(prev => !prev);
-                    // reset form to current name when toggling edit on
-                    if (!isEditing) setFormData({ name: user.name || '' });
-                  }}
-                  disabled={loading}
-                >
-                  {isEditing ? 'Cancel' : 'Edit'}
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  disabled={loading}
-                  style={{ marginLeft: 8 }}
-                  className="danger"
-                >
-                  Delete Account
-                </button>
-              </div>
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setIsEditing(prev => !prev);
+                  // reset form to current name when toggling edit on
+                  if (!isEditing) setFormData({ name: user.name || '' });
+                }}
+                disabled={loading}
+              >
+                {isEditing ? 'Cancel' : 'Edit'}
+              </button>
             </div>
 
             {isEditing ? (
@@ -112,8 +101,20 @@ const ProfilePage = () => {
                   />
                 </div>
 
-                <div style={{ marginTop: 12 }}>
-                  <button type="submit" disabled={loading}>Save</button>
+                <div style={{ marginTop: 12, display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <button type="submit" className="btn-primary" disabled={loading}>
+                    Save
+                  </button>
+                  
+                  <button 
+                    type="button"
+                    className="btn-danger-small"
+                    onClick={handleDeleteAccount}
+                    disabled={loading}
+                    style={{ marginLeft: 'auto' }}
+                  >
+                    Delete Account
+                  </button>
                 </div>
               </form>
             ) : (
