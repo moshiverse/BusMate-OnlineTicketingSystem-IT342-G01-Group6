@@ -82,7 +82,14 @@ public class AuthController {
         }
 
         User user = userService.findByEmail(email);
-        return ResponseEntity.ok(new UserInfoDto(user.getId(), user.getName(), user.getEmail()));
+        UserPublicDto dto = new UserPublicDto(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getRole().name(),
+            user.getCreatedAt()
+        );
+        return ResponseEntity.ok(dto);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
