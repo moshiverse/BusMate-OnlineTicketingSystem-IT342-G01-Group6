@@ -1,5 +1,7 @@
 package edu.cit.lgng.backend.controller;
 
+import edu.cit.lgng.backend.repository.UserRepository;
+import edu.cit.lgng.backend.dto.UpdateUserDto;
 import edu.cit.lgng.backend.config.JwtUtil;
 import edu.cit.lgng.backend.dto.LoginResponseDto;
 import edu.cit.lgng.backend.dto.UserInfoDto;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
@@ -131,5 +135,36 @@ public class AuthController {
         if (p instanceof User u) return u.getEmail();
         if (p instanceof UserDetails su) return su.getUsername();
         return null;
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<?> updateMe(@RequestBody UpdateUserDto dto, Authentication authentication) {
+        // Determine current user by email (authentication.getName() usually returns username/email)
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User updated = userService.updateProfile(currentUser.getId(), dto);
+
+        // Return a safe representation. If you already have UserPublicDto or UserInfoDto, map to it instead.
+        // Example using a simple map to avoid exposing password hash:
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("id", updated.getId());
+        resp.put("name", updated.getName());
+        resp.put("email", updated.getEmail());
+        resp.put("role", updated.getRole());
+        return ResponseEntity.ok(resp);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMe(Authentication authentication) {
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Optional: add checks (prevent deleting last SUPER_ADMIN, etc.)
+        userService.deleteUserById(currentUser.getId());
+
+        return ResponseEntity.noContent().build();
     }
 }
