@@ -53,6 +53,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
+        // Check if account is deleted
+        if (user.getDeletedAt() != null) {
+            throw new RuntimeException("Account has been deleted");
+        } 
+               
         if (!passwordEncoder.matches(rawPassword, user.getPasswordHash()))
             throw new RuntimeException("Invalid credentials");
 
