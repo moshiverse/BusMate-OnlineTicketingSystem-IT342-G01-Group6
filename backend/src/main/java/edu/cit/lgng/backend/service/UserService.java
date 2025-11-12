@@ -57,7 +57,7 @@ public class UserService {
         if (user.getDeletedAt() != null) {
             throw new RuntimeException("Account has been deleted");
         } 
-               
+
         if (!passwordEncoder.matches(rawPassword, user.getPasswordHash()))
             throw new RuntimeException("Invalid credentials");
 
@@ -96,7 +96,11 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository
+        .findAll()
+        .stream()
+        .filter(user -> user.getDeletedAt() == null)
+        .toList();
     }
 
     public User findOrCreateUser(String email, String name) {
