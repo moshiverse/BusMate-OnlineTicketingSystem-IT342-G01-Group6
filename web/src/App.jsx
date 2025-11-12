@@ -8,6 +8,7 @@ import BookingPage from './pages/BookingPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import OAuthRedirectPage from './pages/OAuthRedirectPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
+              <Route path="/oauth2/redirect" element={<OAuthRedirectPage />} />
               <Route 
                 path="/booking" 
                 element={
