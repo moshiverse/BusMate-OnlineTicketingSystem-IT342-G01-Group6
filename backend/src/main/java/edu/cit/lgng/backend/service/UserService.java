@@ -1,5 +1,6 @@
 package edu.cit.lgng.backend.service;
 
+import edu.cit.lgng.backend.dto.UpdateUserDto;
 import edu.cit.lgng.backend.model.User;
 import edu.cit.lgng.backend.model.User.Role;
 import edu.cit.lgng.backend.repository.UserRepository;
@@ -52,6 +53,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
+        // Check if account is deleted
+        if (user.getDeletedAt() != null) {
+            throw new RuntimeException("Account has been deleted");
+        } 
+
         if (!passwordEncoder.matches(rawPassword, user.getPasswordHash()))
             throw new RuntimeException("Invalid credentials");
 
@@ -90,7 +96,11 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository
+        .findAll()
+        .stream()
+        .filter(user -> user.getDeletedAt() == null)
+        .toList();
     }
 
     public User findOrCreateUser(String email, String name) {
@@ -108,5 +118,32 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public User updateProfile(Long userId, UpdateUserDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Prevent updating deleted accounts
+        if (user.getDeletedAt() != null) {
+            throw new RuntimeException("Cannot update deleted account");
+        }        
+
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            user.setName(dto.getName().trim());
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // For now, perform a hard delete. We'll switch to soft-delete if needed later.
+        user.setDeletedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 }

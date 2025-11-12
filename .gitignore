@@ -68,3 +68,4 @@ Desktop.ini
 *.env
 *.properties
 *.config
+backend/src/main/resources/application.properties

@@ -23,7 +23,9 @@ export const authAPI = {
   getAllUsers: () => api.get('/auth/users'),
   createAdmin: (data) => api.post('/auth/create-admin', data),
   updateRole: (id, role) => api.patch(`/auth/update-role/${id}?role=${role}`),
-  transferSuperAdmin: (toUserId) => api.post(`/auth/transfer-super-admin/${toUserId}`)
+  transferSuperAdmin: (toUserId) => api.post(`/auth/transfer-super-admin/${toUserId}`),
+  updateProfile: (data) => api.patch('/auth/me', data),
+  deleteAccount: () => api.delete('/auth/me'),
 };
 
 // Routes API
@@ -61,7 +63,8 @@ export const seatAPI = {
 // Booking API
 export const bookingAPI = {
   create: (data) => api.post('/bookings', data),
-  confirm: (id, data) => api.post(`/bookings/${id}/confirm`, data)
+  confirm: (id, data) => api.post(`/bookings/${id}/confirm`, data),
+  getUserBookings: (userId) => api.get(`/bookings/user/${userId}`)
 };
 
 // Payment API

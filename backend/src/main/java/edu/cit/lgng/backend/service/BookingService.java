@@ -69,4 +69,8 @@ public class BookingService {
         booking.setQrCodeText("QR-" + booking.getId() + "-" + System.currentTimeMillis());
         return bookingRepo.save(booking);
     }
+
+    public List<Booking> getUserBookings(Long userId) {
+        return bookingRepo.findByUserId(userId);
+    }
 }

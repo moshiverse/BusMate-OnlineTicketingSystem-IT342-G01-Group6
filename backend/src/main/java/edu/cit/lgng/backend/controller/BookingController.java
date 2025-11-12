@@ -7,6 +7,7 @@ import edu.cit.lgng.backend.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -29,6 +30,16 @@ public class BookingController {
         try {
             Booking b = bookingService.confirmBooking(id, req.getProviderRef(), req.getAmount());
             return ResponseEntity.ok(b);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserBookings(@PathVariable Long userId) {
+        try {
+            List<Booking> bookings = bookingService.getUserBookings(userId);
+            return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
