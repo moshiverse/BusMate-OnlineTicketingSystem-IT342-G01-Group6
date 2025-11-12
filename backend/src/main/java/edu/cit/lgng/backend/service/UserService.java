@@ -1,5 +1,6 @@
 package edu.cit.lgng.backend.service;
 
+import edu.cit.lgng.backend.dto.UpdateUserDto;
 import edu.cit.lgng.backend.model.User;
 import edu.cit.lgng.backend.model.User.Role;
 import edu.cit.lgng.backend.repository.UserRepository;
@@ -108,5 +109,26 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public User updateProfile(Long userId, UpdateUserDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            user.setName(dto.getName().trim());
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // For now, perform a hard delete. We'll switch to soft-delete if needed later.
+        userRepository.delete(user);
     }
 }
