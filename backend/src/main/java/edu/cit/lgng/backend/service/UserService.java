@@ -129,6 +129,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // For now, perform a hard delete. We'll switch to soft-delete if needed later.
-        userRepository.delete(user);
+        user.setDeletedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 }
