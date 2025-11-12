@@ -10,6 +10,8 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: '' });
   const [loading, setLoading] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
 
   // Populate form when user becomes available
   useEffect(() => {
@@ -162,12 +164,24 @@ const ProfilePage = () => {
             <p className="text-muted">No bookings yet</p>
           ) : (
             <div className="bookings-list">
-              {bookings.map(booking => (
+                {bookings.map(booking => (
                 <div key={booking.id} className="booking-card">
-                  <p><strong>Booking ID:</strong> {booking.id}</p>
-                  <p><strong>Amount:</strong> ₱{booking.amount}</p>
-                  <p><strong>Status:</strong> {booking.status}</p>
-                  <p><strong>Date:</strong> {new Date(booking.createdAt).toLocaleDateString()}</p>
+                  <div className="booking-header">
+                    <span className="booking-id">Booking ID: {booking.id}</span>
+                    <span className={`booking-status status-${booking.status.toLowerCase()}`}>
+                      {booking.status}
+                    </span>
+                  </div>
+                  <div className="booking-details">
+                    <div>
+                      <span className="booking-detail-label">Amount:</span>
+                      <span className="booking-detail-value">₱{booking.amount}</span>
+                    </div>
+                    <div>
+                      <span className="booking-detail-label">Date:</span>
+                      <span>{new Date(booking.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
