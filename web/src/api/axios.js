@@ -63,7 +63,8 @@ export const seatAPI = {
 // Booking API
 export const bookingAPI = {
   create: (data) => api.post('/bookings', data),
-  confirm: (id, data) => api.post(`/bookings/${id}/confirm`, data)
+  confirm: (id, data) => api.post(`/bookings/${id}/confirm`, data),
+  getUserBookings: (userId) => api.get(`/bookings/user/${userId}`)
 };
 
 // Payment API
