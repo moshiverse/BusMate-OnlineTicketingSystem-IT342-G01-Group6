@@ -125,6 +125,11 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Prevent updating deleted accounts
+        if (user.getDeletedAt() != null) {
+            throw new RuntimeException("Cannot update deleted account");
+        }        
+
         if (dto.getName() != null && !dto.getName().isBlank()) {
             user.setName(dto.getName().trim());
         }
