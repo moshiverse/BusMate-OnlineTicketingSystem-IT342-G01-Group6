@@ -1,56 +1,63 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import Navbar from './components/layout/Navbar';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import BookingPage from './pages/BookingPage';
-import AdminPage from './pages/AdminPage';
-import ProfilePage from './pages/ProfilePage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import { useState } from 'react'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import AuthPage from './components/AuthPage/AuthPage'
+import Dashboard from './components/Dashboard/Dashboard'
+import RoutesPage from './pages/RoutesPage'
+import BookingPage from './pages/BookingPage'
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const navigate = useNavigate()
+
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true)
+    navigate('/dashboard', { replace: true })
+  }
+
+  const handleSignOut = () => {
+    setIsAuthenticated(false)
+    navigate('/', { replace: true })
+  }
+
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <div className="app">
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route 
-                path="/booking" 
-                element={
-                  <ProtectedRoute>
-                    <BookingPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/admin" 
-                element={
-                  <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
-                    <AdminPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </main>
-        </div>
-      </BrowserRouter>
-    </AuthProvider>
-  );
+    <Routes>
+      <Route path="/" element={<AuthPage onAuthenticated={handleAuthSuccess} />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Dashboard onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/routes"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <RoutesPage onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/booking"
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <BookingPage onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/'} replace />} />
+    </Routes>
+  )
 }
 
-export default App;
+function ProtectedRoute({ isAuthenticated, children }) {
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
+export default App
+

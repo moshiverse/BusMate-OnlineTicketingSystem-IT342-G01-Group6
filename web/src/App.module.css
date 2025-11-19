@@ -1,0 +1,74 @@
+:root {
+  color-scheme: light;
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding: clamp(1.5rem, 4vw, 4rem);
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+
+.hero {
+  color: #0f172a;
+  max-width: 34rem;
+  align-self: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  margin: 1rem 0 1.5rem;
+  line-height: 1.1;
+  font-family: 'Space Grotesk', 'Poppins', system-ui, sans-serif;
+}
+
+.accent {
+  color: #4f46e5;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 2rem;
+}
+
+.highlights {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.highlights li {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  color: #0f172a;
+  font-size: 0.95rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.08);
+}
+
+.panel {
+  width: min(26rem, 100%);
+  justify-self: center;
+}
+
