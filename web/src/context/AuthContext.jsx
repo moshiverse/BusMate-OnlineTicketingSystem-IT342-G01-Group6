@@ -23,18 +23,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-  const response = await authAPI.login(credentials);
-  localStorage.setItem("token", response.data.token);
-  await checkAuth();
-  return response.data;
-};
+    try {
+      const response = await authAPI.login(credentials);
+      localStorage.setItem("token", response.data.token);
+      await checkAuth();
+      return response.data;
+    } catch (error) {
+      // Ensure error is thrown for components to catch
+      throw error;
+    }
+  };
 
-const signup = async (data) => {
-  const response = await authAPI.signup(data);
-  localStorage.setItem("token", response.data.token);
-  await checkAuth();
-  return response.data;
-};
+  const signup = async (data) => {
+    try {
+      const response = await authAPI.signup(data);
+      localStorage.setItem("token", response.data.token);
+      await checkAuth();
+      return response.data;
+    } catch (error) {
+      // Ensure error is thrown for components to catch
+      throw error;
+    }
+  };
 
 
 const logout = () => {

@@ -1,0 +1,18 @@
+/* HomePage Specific Styles */
+.welcome-section {
+  margin-top: 60px;
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 16px;
+}
+
+.welcome-section h2 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.welcome-section p {
+  color: var(--text-secondary);
+  font-size: 18px;
+}
