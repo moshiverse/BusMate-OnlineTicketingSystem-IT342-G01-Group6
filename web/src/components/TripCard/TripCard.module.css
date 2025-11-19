@@ -1,0 +1,151 @@
+.card {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.busIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: #eef2ff;
+  color: #1d4ed8;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.busLabel {
+  margin: 0;
+  font-weight: 600;
+  color: #475569;
+}
+
+.schedule {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.time {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0;
+}
+
+.duration {
+  text-align: center;
+  color: #475569;
+  font-weight: 600;
+}
+
+.duration span {
+  display: block;
+  height: 1px;
+  background: rgba(15, 23, 42, 0.1);
+  margin-bottom: 0.4rem;
+}
+
+.amenities {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.amenities span {
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+
+.bookingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #155dfc;
+  margin: 0.2rem 0;
+}
+
+.seats {
+  margin: 0;
+  color: #16a34a;
+  font-size: 0.95rem;
+}
+
+.bookingRow button {
+  border: none;
+  border-radius: 0.85rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, #155dfc, #4f39f6);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bookingRow button:hover {
+  opacity: 0.95;
+}
+
+@media (max-width: 640px) {
+  .schedule {
+    grid-template-columns: 1fr;
+  }
+
+  .duration span {
+    display: none;
+  }
+
+  .bookingRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bookingRow button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
