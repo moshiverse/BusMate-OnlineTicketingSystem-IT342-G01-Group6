@@ -4,11 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client": "vite",
-    "dev:server": "cd backend && mvnw.cmd spring-boot:run",
-    "build": "vite build",
-    "preview": "vite preview"
+    "frontend": "vite",
+    "backend": "cd ../backend && mvn spring-boot:run",
+    "dev": "concurrently --kill-others-on-fail \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "@react-oauth/google": "^0.12.2",
+    "axios": "^1.13.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.1",
