@@ -103,17 +103,6 @@ public class UserService {
         .toList();
     }
 
-    public User findOrCreateUser(String email, String name) {
-        return userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(
-                        User.builder()
-                                .name(name)
-                                .email(email)
-                                .role(Role.USER)
-                                .createdAt(LocalDateTime.now())
-                                .build()
-                ));
-    }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -146,4 +135,38 @@ public class UserService {
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
+
+    @Transactional
+    public User upsertOAuthUser(String email, String name) {
+        return userRepository.findByEmail(email)
+                .map(existing -> {
+                    boolean changed = false;
+
+                    if (name != null && !name.equals(existing.getName())) {
+                        existing.setName(name);
+                        changed = true;
+                    }
+
+                    // Optional: If the account was soft-deleted before, restore it
+                    if (existing.getDeletedAt() != null) {
+                        existing.setDeletedAt(null);
+                        changed = true;
+                    }
+
+                    if (changed) {
+                        return userRepository.save(existing);
+                    }
+                    return existing;
+                })
+                .orElseGet(() -> {
+                    User newUser = User.builder()
+                            .name(name)
+                            .email(email)
+                            .role(Role.USER)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+                    return userRepository.save(newUser);
+                });
+    }
+
 }
