@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styles from './AuthPanel.module.css'
-import { api } from '../../services/api'
+import { authAPI } from '../../api/axios'
 
 const tabs = [
   { id: 'login', label: 'Login' },
@@ -47,14 +47,18 @@ function AuthPanel({ onAuthenticated }) {
         setStatus('idle')
         return
       }
-      payload.fullName = formData.get('fullName')
+      payload.name = formData.get('fullName')
     }
 
     try {
+      let response
       if (mode === 'login') {
-        await api.login(payload)
+        response = await authAPI.login(payload)
       } else {
-        await api.register(payload)
+        response = await authAPI.signup(payload)
+      }
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
       }
       if (typeof onAuthenticated === 'function') {
         onAuthenticated()
@@ -64,6 +68,10 @@ function AuthPanel({ onAuthenticated }) {
     } finally {
       setStatus('idle')
     }
+  }
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google'
   }
 
   const content = copy[mode]
@@ -139,7 +147,7 @@ function AuthPanel({ onAuthenticated }) {
       <button
         type="button"
         className={styles.googleButton}
-        onClick={() => setError('Google sign-on is coming soon!')}
+        onClick={handleGoogleLogin}
       >
         <img src="https://www.figma.com/api/mcp/asset/5b7c29ab-57d3-4741-a357-89b4e8e59a34" alt="" />
         {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
@@ -158,4 +166,3 @@ function AuthPanel({ onAuthenticated }) {
 }
 
 export default AuthPanel
-
