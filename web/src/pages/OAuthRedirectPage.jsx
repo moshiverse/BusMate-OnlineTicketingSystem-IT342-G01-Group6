@@ -14,10 +14,15 @@ const OAuthRedirectPage = () => {
       localStorage.setItem('token', token);
 
       checkAuth().then(() => {
-        navigate('/'); // Redirect to homepage
+        // Force a full reload so the root App mounts again and reads localStorage.
+        // Replace avoids leaving the redirect URL in the history.
+        window.location.replace('/dashboard');
+      }).catch(() => {
+        // If token validation fails, send user to the auth page.
+        navigate('/', { replace: true });
       });
     } else {
-      navigate('/login');
+      navigate('/', { replace: true });
     }
   }, [navigate, checkAuth]);
 
