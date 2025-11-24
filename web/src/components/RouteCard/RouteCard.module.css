@@ -1,0 +1,112 @@
+.card {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.compact {
+  padding: 1.25rem;
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0.15rem 0 0;
+}
+
+.connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: #e0e7ff;
+  color: #155dfc;
+  font-size: 1.2rem;
+}
+
+.badge {
+  justify-self: end;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.metaValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: 0.15rem;
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #155dfc;
+}
+
+.extra {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.extra span {
+  background: #eef2ff;
+  color: #1d4ed8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+
+.bookButton {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #155dfc, #4f39f6);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bookButton:hover {
+  opacity: 0.95;
+}
+

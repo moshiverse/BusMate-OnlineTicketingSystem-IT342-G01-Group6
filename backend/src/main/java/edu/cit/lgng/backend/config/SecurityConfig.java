@@ -26,8 +26,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        // Define a RequestMatcher for API endpoints (optional, but good practice)
         RequestMatcher apiMatcher = request -> request.getRequestURI().startsWith("/api/");
 
+        // Define the AuthenticationEntryPoint for API requests that require JWT
         AuthenticationEntryPoint apiEntryPoint = (HttpServletRequest req, HttpServletResponse res, org.springframework.security.core.AuthenticationException ex) -> {
             if (apiMatcher.matches(req)) {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -42,14 +44,25 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        // 1. Explicitly permit login, signup, and OAuth flow endpoints
+                        .requestMatchers("/api/auth/login", "/api/auth/signup", "/oauth2/**", "/login/**").permitAll()
+                        
+                        // 2. Allow access to unauthenticated resources (if any)
+                        // .requestMatchers("/api/public/**").permitAll()
+
+                        // 3. ALL other requests (including /api/auth/me) MUST be authenticated
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(apiEntryPoint))
+                .exceptionHandling(ex -> ex
+                        // Use the custom entry point to handle 401s
+                        .authenticationEntryPoint(apiEntryPoint)
+                )
                 .oauth2Login(oauth -> oauth
                         .successHandler(oauth2LoginSuccessHandler)
                 )
+                
+                // CRUCIAL: Add the JWT filter to validate the Bearer token before the standard UsernamePasswordAuthenticationFilter runs
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
