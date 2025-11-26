@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI, bookingAPI } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import BusMateLayout from '../components/layout/BusMateLayout';
+import '../styles/ProfilePage.css';
+import { formatCurrency, formatDateLabel } from '../utils/formatters';
 
 const ProfilePage = () => {
   const { user, setUser, logout } = useAuth();
@@ -69,10 +72,8 @@ const ProfilePage = () => {
     setLoading(true);
     try {
       await authAPI.deleteAccount();
-      // clear client-side auth and navigate to login
-      logout(); // this clears token and navigates to login in your context
-      // If your logout does not navigate, do it here:
-      // navigate('/login');
+      logout();
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Failed to delete account', err);
       alert(err.response?.data?.message || 'Failed to delete account');
@@ -82,7 +83,8 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-page">
+    <BusMateLayout onSignOut={logout}>
+      <div className="profile-page">
       <div className="profile-container">
         <h1>My Profile</h1>
 
@@ -92,7 +94,7 @@ const ProfilePage = () => {
           </div>
 
           <div className="profile-info">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="profile-info-header">
               <h3>Account Info</h3>
               <button
                 className="btn-secondary"
@@ -119,17 +121,15 @@ const ProfilePage = () => {
                   />
                 </div>
 
-                <div style={{ marginTop: 12, display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div className="profile-actions">
                   <button type="submit" className="btn-primary" disabled={loading}>
                     Save
                   </button>
-                  
                   <button 
                     type="button"
                     className="btn-danger-small"
                     onClick={handleDeleteAccount}
                     disabled={loading}
-                    style={{ marginLeft: 'auto' }}
                   >
                     Delete Account
                   </button>
@@ -175,11 +175,13 @@ const ProfilePage = () => {
                   <div className="booking-details">
                     <div>
                       <span className="booking-detail-label">Amount:</span>
-                      <span className="booking-detail-value">₱{booking.amount}</span>
+                      <span className="booking-detail-value">
+                        {formatCurrency(booking.amount, { withCents: true })}
+                      </span>
                     </div>
                     <div>
                       <span className="booking-detail-label">Date:</span>
-                      <span>{new Date(booking.createdAt).toLocaleDateString()}</span>
+                      <span>{formatDateLabel(booking.createdAt)}</span>
                     </div>
                   </div>
                 </div>
@@ -188,7 +190,8 @@ const ProfilePage = () => {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </BusMateLayout>
   );
 };
 

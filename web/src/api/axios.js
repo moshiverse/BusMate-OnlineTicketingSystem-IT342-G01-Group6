@@ -31,25 +31,33 @@ export const authAPI = {
 // Routes API
 export const routesAPI = {
   getAll: () => api.get('/routes'),
-  create: (data) => api.post('/routes', data)
+  create: (data) => api.post('/routes', data),
+  update: (id, data) => api.put(`/routes/${id}`, data),
+  delete: (id) => api.delete(`/routes/${id}`)
 };
 
 // Bus API
 export const busAPI = {
   getAll: () => api.get('/buses'),
-  create: (data) => api.post('/buses', data)
+  create: (data) => api.post('/buses', data),
+  update: (id, data) => api.put(`/buses/${id}`, data),
+  delete: (id) => api.delete(`/buses/${id}`)
 };
 
 // Bus Types API
 export const busTypeAPI = {
   getAll: () => api.get('/bus-types'),
-  create: (data) => api.post('/bus-types', data)
+  create: (data) => api.post('/bus-types', data),
+  update: (id, data) => api.put(`/bus-types/${id}`, data),
+  delete: (id) => api.delete(`/bus-types/${id}`)
 };
 
 // Schedule API
 export const scheduleAPI = {
   getAll: () => api.get('/schedules'),
   create: (data) => api.post('/schedules', data),
+  update: (id, data) => api.put(`/schedules/${id}`, data),
+  delete: (id) => api.delete(`/schedules/${id}`),
   getSeats: (id) => api.get(`/schedules/${id}/seats`)
 };
 
@@ -64,7 +72,9 @@ export const seatAPI = {
 export const bookingAPI = {
   create: (data) => api.post('/bookings', data),
   confirm: (id, data) => api.post(`/bookings/${id}/confirm`, data),
-  getUserBookings: (userId) => api.get(`/bookings/user/${userId}`)
+  getUserBookings: (userId) => api.get(`/bookings/user/${userId}`),
+  // Admin / reporting
+  getAll: () => api.get('/bookings'),
 };
 
 // Payment API

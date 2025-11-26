@@ -1,38 +1,83 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import RouteCard from '../RouteCard/RouteCard'
 import BusMateLayout from '../Layout/BusMateLayout'
 import styles from './Dashboard.module.css'
-import { api } from '../../services/api'
+import { routesAPI, scheduleAPI } from '../../api/axios'
 import { heroBackground, ctaBackground, dashboardFallback } from './dashboardData'
+import { formatCurrency, formatDuration } from '../../utils/formatters'
 
 function Dashboard({ onSignOut }) {
-  const [data, setData] = useState(dashboardFallback)
+  const navigate = useNavigate()
+  const [popularRoutes, setPopularRoutes] = useState(dashboardFallback.popularRoutes)
+  const [stats, setStats] = useState(dashboardFallback.stats)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let isMounted = true
-    api
-      .fetchDashboard()
-      .then((payload) => {
-        if (isMounted) setData(payload)
-      })
-      .catch(() => {
-        setData(dashboardFallback)
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false)
-      })
+    const fetchDashboard = async () => {
+      try {
+        const [routesRes, schedulesRes] = await Promise.all([routesAPI.getAll(), scheduleAPI.getAll()])
+        if (!isMounted) return
+        const schedules = schedulesRes.data ?? []
+        const routes = routesRes.data ?? []
+        const routeStats = schedules.reduce((acc, schedule) => {
+          const routeId = schedule.route?.id
+          if (!routeId) return acc
+          if (!acc[routeId]) {
+            acc[routeId] = {
+              count: 0,
+              minPrice: Number.MAX_SAFE_INTEGER,
+            }
+          }
+          const entry = acc[routeId]
+          entry.count += 1
+          const price = Number(schedule.price)
+          if (!Number.isNaN(price)) {
+            entry.minPrice = Math.min(entry.minPrice, price)
+          }
+          return acc
+        }, {})
 
+        const hydratedRoutes = routes.map((route) => {
+          const statsForRoute = routeStats[route.id]
+          return {
+            id: route.id,
+            from: route.origin,
+            to: route.destination,
+            distance: route.distanceKm ? `${route.distanceKm} km` : '—',
+            duration: route.durationMinutes ? formatDuration(route.durationMinutes) : '—',
+            price:
+              statsForRoute && statsForRoute.minPrice !== Number.MAX_SAFE_INTEGER
+                ? formatCurrency(statsForRoute.minPrice)
+                : null,
+            extras: statsForRoute ? [`🚌 ${statsForRoute.count} trips scheduled`] : [],
+          }
+        })
+
+        setPopularRoutes(hydratedRoutes.slice(0, 3))
+
+        const totalSeats = schedules.reduce((sum, sched) => sum + (sched.availableSeats ?? 0), 0)
+        setStats([
+          { value: `${schedules.length}`, label: 'Upcoming Trips' },
+          { value: `${routes.length}`, label: 'Routes Available' },
+          { value: `${totalSeats}`, label: 'Seats Live' },
+        ])
+      } catch (error) {
+        console.error('Failed to sync dashboard data', error)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    fetchDashboard()
     return () => {
       isMounted = false
     }
   }, [])
 
-  const hero = data.hero ?? dashboardFallback.hero
-  const features = data.features ?? dashboardFallback.features
-  const popularRoutes = data.popularRoutes ?? dashboardFallback.popularRoutes
-  const stats = data.stats ?? dashboardFallback.stats
+  const hero = dashboardFallback.hero
+  const features = dashboardFallback.features
 
   return (
     <BusMateLayout onSignOut={onSignOut}>
@@ -109,7 +154,9 @@ function Dashboard({ onSignOut }) {
         <h2>Ready to Start Your Journey?</h2>
         <p>Join thousands of travelers who rely on BusMate for stress-free intercity trips.</p>
         <div className={styles.ctaButtons}>
-          <button type="button">Book Your Ticket Now</button>
+          <button type="button" onClick={() => navigate('/booking')}>
+            Book Your Ticket Now
+          </button>
           <Link to="/routes" className={styles.ctaOutline}>
             View All Routes
           </Link>

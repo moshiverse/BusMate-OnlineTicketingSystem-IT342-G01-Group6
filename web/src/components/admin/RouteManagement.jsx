@@ -4,6 +4,7 @@ import { routesAPI } from '../../api/axios';
 const RouteManagement = () => {
   const [routes, setRoutes] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingRoute, setEditingRoute] = useState(null);
   const [formData, setFormData] = useState({
     origin: '',
     destination: '',
@@ -27,27 +28,66 @@ const RouteManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await routesAPI.create(formData);
+      if (editingRoute) {
+        await routesAPI.update(editingRoute.id, formData);
+      } else {
+        await routesAPI.create(formData);
+      }
       setFormData({ origin: '', destination: '', distance: '', duration: '' });
       setShowForm(false);
+      setEditingRoute(null);
       loadRoutes();
     } catch (error) {
-      alert('Failed to create route');
+      alert(`Failed to ${editingRoute ? 'update' : 'create'} route`);
     }
+  };
+
+  const handleEdit = (route) => {
+    setFormData({
+      origin: route.origin,
+      destination: route.destination,
+      distance: route.distance,
+      duration: route.duration
+    });
+    setEditingRoute(route);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (routeId) => {
+    if (window.confirm('Are you sure you want to delete this route?')) {
+      try {
+        await routesAPI.delete(routeId);
+        loadRoutes();
+      } catch (error) {
+        alert('Failed to delete route');
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({ origin: '', destination: '', distance: '', duration: '' });
+    setShowForm(false);
+    setEditingRoute(null);
   };
 
   return (
     <div className="admin-section">
       <div className="section-header">
         <h2>Route Management</h2>
-        <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
+        <button className="btn-primary" onClick={() => {
+          if (showForm) {
+            handleCancel();
+          } else {
+            setShowForm(true);
+          }
+        }}>
           {showForm ? 'Cancel' : 'Add Route'}
         </button>
       </div>
 
       {showForm && (
         <form className="admin-form" onSubmit={handleSubmit}>
-          <h3>Add New Route</h3>
+          <h3>{editingRoute ? 'Edit Route' : 'Add New Route'}</h3>
           <input
             type="text"
             placeholder="Origin"
@@ -76,7 +116,14 @@ const RouteManagement = () => {
             onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
             required
           />
-          <button type="submit" className="btn-primary">Add Route</button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button type="submit" className="btn-primary">
+              {editingRoute ? 'Update Route' : 'Add Route'}
+            </button>
+            <button type="button" className="btn-secondary" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
         </form>
       )}
 
@@ -89,6 +136,7 @@ const RouteManagement = () => {
               <th>Destination</th>
               <th>Distance (km)</th>
               <th>Duration (min)</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -99,6 +147,22 @@ const RouteManagement = () => {
                 <td>{route.destination}</td>
                 <td>{route.distance}</td>
                 <td>{route.duration}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '5px' }}>
+                    <button
+                      className="btn-secondary btn-small"
+                      onClick={() => handleEdit(route)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn-danger btn-small"
+                      onClick={() => handleDelete(route.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

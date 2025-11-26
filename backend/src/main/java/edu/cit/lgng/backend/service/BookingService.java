@@ -73,4 +73,12 @@ public class BookingService {
     public List<Booking> getUserBookings(Long userId) {
         return bookingRepo.findByUserId(userId);
     }
+
+    /**
+     * Returns all bookings in the system.
+     * Intended for admin / reporting use on the dashboard.
+     */
+    public List<Booking> getAllBookings() {
+        return bookingRepo.findAll();
+    }
 }

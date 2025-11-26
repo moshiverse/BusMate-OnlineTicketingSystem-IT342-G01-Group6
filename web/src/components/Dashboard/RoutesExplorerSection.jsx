@@ -1,7 +1,20 @@
+import { useMemo, useState } from 'react'
 import RouteCard from '../RouteCard/RouteCard'
 import styles from './Dashboard.module.css'
 
 function RoutesExplorerSection({ popularRoutes, allRoutes, showBackLink = false }) {
+  const [search, setSearch] = useState('')
+  const filteredRoutes = useMemo(() => {
+    if (!search) return allRoutes
+    const query = search.toLowerCase()
+    return allRoutes.filter(
+      (route) =>
+        route.from?.toLowerCase().includes(query) ||
+        route.to?.toLowerCase().includes(query) ||
+        `${route.from} ${route.to}`.toLowerCase().includes(query),
+    )
+  }, [allRoutes, search])
+
   return (
     <section className={styles.routesExplorer}>
       {showBackLink && (
@@ -17,7 +30,12 @@ function RoutesExplorerSection({ popularRoutes, allRoutes, showBackLink = false 
 
       <div className={styles.searchBar}>
         <span>🔍</span>
-        <input type="text" placeholder="Search by city name (e.g., Manila, Baguio, Cebu)..." />
+        <input
+          type="text"
+          placeholder="Search by city name (e.g., Manila, Baguio, Cebu)..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
       <div className={styles.routesGroup}>
@@ -37,13 +55,21 @@ function RoutesExplorerSection({ popularRoutes, allRoutes, showBackLink = false 
       <div className={styles.routesGroup}>
         <div className={styles.routesGroupHeader}>
           <h3>All Available Routes</h3>
-          <span className={styles.groupHint}>{allRoutes.length} routes</span>
+          <span className={styles.groupHint}>
+            {filteredRoutes.length} {filteredRoutes.length === 1 ? 'route' : 'routes'}
+          </span>
         </div>
-        <div className={styles.allRoutesGrid}>
-          {allRoutes.map((route) => (
-            <RouteCard key={`${route.from}-${route.to}`} {...route} variant="compact" />
-          ))}
-        </div>
+        {filteredRoutes.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>No routes matched your search.</p>
+          </div>
+        ) : (
+          <div className={styles.allRoutesGrid}>
+            {filteredRoutes.map((route) => (
+              <RouteCard key={`${route.from}-${route.to}`} {...route} variant="compact" />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={styles.missingBanner}>

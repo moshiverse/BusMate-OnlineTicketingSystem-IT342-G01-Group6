@@ -1,5 +1,6 @@
 package edu.cit.lgng.backend.controller;
 
+import edu.cit.lgng.backend.dto.BusCreateDto;
 import edu.cit.lgng.backend.model.Bus;
 import edu.cit.lgng.backend.service.BusService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,21 @@ public class BusController {
         return service.all();
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     @PostMapping
-    public Bus create(@RequestBody Bus b) {
-        return service.create(b);
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public Bus create(@RequestBody BusCreateDto dto) {
+        return service.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public Bus update(@PathVariable Long id, @RequestBody BusCreateDto dto) {
+        return service.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

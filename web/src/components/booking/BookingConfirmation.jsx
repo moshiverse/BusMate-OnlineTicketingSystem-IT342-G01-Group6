@@ -1,124 +1,111 @@
-import { useState } from 'react';
-import { bookingAPI } from '../../api/axios';
-import { useAuth } from '../../context/AuthContext';
+import { useMemo, useState } from 'react'
+import { bookingAPI } from '../../api/axios'
+import { useAuth } from '../../context/AuthContext'
+import { formatCurrency, formatDateLabel, formatTimeLabel } from '../../utils/formatters'
 
-const BookingConfirmation = ({ schedule, selectedSeats, amount, onComplete }) => {
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [error, setError] = useState('');
+const BookingConfirmation = ({ schedule, selectedSeats, amount, onComplete, onCancel }) => {
+  const { user } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [paymentMethod] = useState('gotyme')
+
+  const referenceCode = useMemo(
+    () => `BM-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 90 + 10)}`,
+    [],
+  )
 
   const handleConfirmBooking = async () => {
-    if (!paymentMethod) {
-      setError('Please select a payment method');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
+    setLoading(true)
+    setError('')
 
     try {
-      // Create booking
       const bookingResponse = await bookingAPI.create({
         userId: user.id,
         scheduleId: schedule.id,
-        amount: amount,
-        seatNumbers: selectedSeats
-      });
+        amount,
+        seatNumbers: selectedSeats,
+      })
 
-      // Simulate payment confirmation
-      const providerRef = `PAY-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
       await bookingAPI.confirm(bookingResponse.data.id, {
-        providerRef: providerRef,
-        amount: amount
-      });
+        providerRef: referenceCode,
+        amount,
+      })
 
       onComplete({
         bookingId: bookingResponse.data.id,
-        qrCode: bookingResponse.data.qrCodeText
-      });
+        qrCode: bookingResponse.data.qrCodeText,
+        referenceCode,
+      })
     } catch (err) {
-      setError(err.response?.data?.error || 'Booking failed. Please try again.');
+      setError(err.response?.data?.error || 'Booking failed. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  const tripLabel = `${schedule.route?.origin} → ${schedule.route?.destination}`
+  const departureLabel = `${formatDateLabel(schedule.travelDate)} · ${formatTimeLabel(schedule.departureTime)}`
 
   return (
     <div className="booking-confirmation">
-      <h2>Confirm Your Booking</h2>
+      <div className="payment-card">
+        <header>
+          <h3>GoTyme Payment</h3>
+          <p>Complete your payment to confirm your booking</p>
+        </header>
 
-      <div className="confirmation-details">
-        <div className="detail-section">
-          <h3>Trip Details</h3>
-          <p><strong>Route:</strong> {schedule.route?.origin} → {schedule.route?.destination}</p>
-          <p><strong>Departure:</strong> {new Date(schedule.departureTime).toLocaleString()}</p>
-          <p><strong>Arrival:</strong> {new Date(schedule.arrivalTime).toLocaleString()}</p>
+        <div className="total-amount">
+          <span>Total Amount</span>
+          <strong>{formatCurrency(amount, { withCents: true })}</strong>
         </div>
 
-        <div className="detail-section">
-          <h3>Seat Selection</h3>
-          <p><strong>Seats:</strong> {selectedSeats.join(', ')}</p>
-          <p><strong>Number of Passengers:</strong> {selectedSeats.length}</p>
-        </div>
-
-        <div className="detail-section">
-          <h3>Payment Details</h3>
-          <p><strong>Price per Seat:</strong> ₱{schedule.price}</p>
-          <p><strong>Total Amount:</strong> ₱{amount.toFixed(2)}</p>
-        </div>
-
-        <div className="detail-section">
-          <h3>Payment Method</h3>
-          <div className="payment-methods">
-            <label className="payment-option">
-              <input
-                type="radio"
-                name="payment"
-                value="gcash"
-                checked={paymentMethod === 'gcash'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>GCash</span>
-            </label>
-            <label className="payment-option">
-              <input
-                type="radio"
-                name="payment"
-                value="paymaya"
-                checked={paymentMethod === 'paymaya'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>PayMaya</span>
-            </label>
-            <label className="payment-option">
-              <input
-                type="radio"
-                name="payment"
-                value="card"
-                checked={paymentMethod === 'card'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>Credit/Debit Card</span>
-            </label>
+        <div className="trip-overview">
+          <div>
+            <p className="eyebrow">Route</p>
+            <h4>{tripLabel}</h4>
+          </div>
+          <div>
+            <p className="eyebrow">Departure</p>
+            <h4>{departureLabel}</h4>
+          </div>
+          <div>
+            <p className="eyebrow">Seats</p>
+            <h4>{selectedSeats.join(', ')}</h4>
           </div>
         </div>
-      </div>
 
-      {error && <div className="error-message">{error}</div>}
+        <div className="instruction-list">
+          <p>Follow these steps to complete your payment:</p>
+          <ol>
+            <li>Open your GoTyme Bank app</li>
+            <li>Select “Pay Bills” or “Send Money”</li>
+            <li>Enter the amount: {formatCurrency(amount, { withCents: true })}</li>
+            <li>Use reference: {referenceCode}</li>
+          </ol>
+        </div>
 
-      <div className="confirmation-actions">
-        <button
-          className="btn-primary btn-large"
-          onClick={handleConfirmBooking}
-          disabled={loading || !paymentMethod}
-        >
-          {loading ? 'Processing...' : `Pay ₱${amount.toFixed(2)}`}
-        </button>
+        <div className="demo-note">
+          <span role="img" aria-label="Info">
+            💡
+          </span>
+          This is a demo. In production, you’ll be redirected to the actual GoTyme payment gateway.
+        </div>
+
+        <div className="secure-note">🔒 Your payment is secured with 256-bit SSL encryption</div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <div className="confirmation-actions">
+          <button type="button" className="btn-secondary" onClick={() => onCancel?.()} disabled={loading}>
+            Cancel
+          </button>
+          <button className="btn-primary btn-large" onClick={handleConfirmBooking} disabled={loading || !paymentMethod}>
+            {loading ? 'Processing...' : `Confirm Payment`}
+          </button>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BookingConfirmation;
+export default BookingConfirmation

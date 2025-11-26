@@ -26,6 +26,19 @@ public class ScheduleController {
         return scheduleService.create(s);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public Schedule update(@PathVariable Long id, @RequestBody Schedule schedule) {
+        return scheduleService.update(id, schedule);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        scheduleService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/seats")
     public ResponseEntity<List<Seat>> seats(@PathVariable Long id) {
         return ResponseEntity.ok(seatRepo.findByScheduleId(id));

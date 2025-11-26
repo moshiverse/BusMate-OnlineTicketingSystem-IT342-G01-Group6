@@ -1,6 +1,18 @@
 import styles from './TripCard.module.css'
 
-function TripCard({ id, tier, departureTime, arrivalTime, duration, price, seats, amenities }) {
+function TripCard({
+  id,
+  tier,
+  departureTime,
+  arrivalTime,
+  duration,
+  price,
+  seats,
+  amenities = [],
+  onSelect,
+  disabled = false,
+  ctaLabel = 'Select Seats →',
+}) {
   return (
     <article className={styles.card}>
       <div className={styles.meta}>
@@ -39,7 +51,9 @@ function TripCard({ id, tier, departureTime, arrivalTime, duration, price, seats
           <p className={styles.price}>{price}</p>
           <p className={styles.seats}>{seats}</p>
         </div>
-        <button type="button">Select Seats →</button>
+        <button type="button" onClick={onSelect} disabled={disabled || !onSelect}>
+          {disabled ? 'Sold Out' : ctaLabel}
+        </button>
       </div>
     </article>
   )

@@ -23,5 +23,24 @@ public class BusTypeController {
     public BusType create(@RequestBody BusType type) {
         return repo.save(type);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public BusType update(@PathVariable Long id, @RequestBody BusType type) {
+        BusType existingType = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bus type not found"));
+        existingType.setName(type.getName());
+        existingType.setCapacity(type.getCapacity());
+        existingType.setDescription(type.getDescription());
+        return repo.save(existingType);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public void delete(@PathVariable Long id) {
+        BusType type = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bus type not found"));
+        repo.delete(type);
+    }
 }
 
