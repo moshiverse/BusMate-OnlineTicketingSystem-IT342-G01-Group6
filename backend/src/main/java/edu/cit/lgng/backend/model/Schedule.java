@@ -31,6 +31,9 @@ public class Schedule {
     @Column(name = "departure_time", nullable = false)
     private LocalTime departureTime;
 
+    @Column(name = "arrival_time", nullable = false)
+    private LocalTime arrivalTime;
+
     @Column(nullable = false)
     private BigDecimal price;
 

@@ -63,6 +63,121 @@
   cursor: pointer;
 }
 
+.userMenu {
+  position: relative;
+}
+
+.userButton {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: #fff;
+  cursor: pointer;
+  min-width: 190px;
+  box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.08);
+}
+
+.userBadge {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #155dfc, #4f39f6);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.userMeta strong {
+  font-size: 0.95rem;
+}
+
+.userMeta small {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.userDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  min-width: 240px;
+  background: #fff;
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.15);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 15;
+}
+
+.userDropdown a,
+.userDropdown button {
+  border: none;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.userDropdown button {
+  color: #dc2626;
+}
+
+.userDetails {
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.userName {
+  margin: 0;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.userEmail {
+  margin: 0.15rem 0 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.roleBadge {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(21, 93, 252, 0.12);
+  color: #155dfc;
+}
+
+.roleBadgeAdmin {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+.roleBadgeSuperAdmin {
+  background: rgba(249, 115, 22, 0.15);
+  color: #ea580c;
+}
+
 .hero {
   position: relative;
   background-size: cover;
@@ -459,6 +574,15 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.emptyState {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  color: #475569;
+  border: 1px dashed rgba(15, 23, 42, 0.2);
 }
 
 .statLabel {

@@ -1,47 +1,50 @@
-import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import AuthPage from './components/AuthPage/AuthPage'
 import Dashboard from './components/Dashboard/Dashboard'
 import RoutesPage from './pages/RoutesPage'
 import BookingPage from './pages/BookingPage'
 import OAuthRedirectPage from './pages/OAuthRedirectPage'
+import ProfilePage from './pages/ProfilePage'
+import AdminPage from './pages/AdminPage'
+import MyBookingsPage from './pages/MyBookingsPage'
+import ProtectedRoute from './components/auth/ProtectedRoute'
+import { useAuth } from './context/AuthContext'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const { user, loading, checkAuth, logout } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      setIsAuthenticated(true)
-    }
-    setLoading(false)
-  }, [])
-
-  const handleAuthSuccess = () => {
-    setIsAuthenticated(true)
+  const handleAuthSuccess = async () => {
+    await checkAuth()
     navigate('/dashboard', { replace: true })
   }
 
   const handleSignOut = () => {
-    localStorage.removeItem('token')
-    setIsAuthenticated(false)
+    logout()
     navigate('/', { replace: true })
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div className="loading-page">Loading...</div>
   }
 
   return (
     <Routes>
-      <Route path="/" element={<AuthPage onAuthenticated={handleAuthSuccess} />} />
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <AuthPage onAuthenticated={handleAuthSuccess} />
+          )
+        }
+      />
       <Route path="/oauth2/redirect" element={<OAuthRedirectPage />} />
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProtectedRoute>
             <Dashboard onSignOut={handleSignOut} />
           </ProtectedRoute>
         }
@@ -49,7 +52,7 @@ function App() {
       <Route
         path="/routes"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProtectedRoute>
             <RoutesPage onSignOut={handleSignOut} />
           </ProtectedRoute>
         }
@@ -57,22 +60,38 @@ function App() {
       <Route
         path="/booking"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProtectedRoute>
             <BookingPage onSignOut={handleSignOut} />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/'} replace />} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute>
+            <MyBookingsPage onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
+            <AdminPage onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to={user ? '/dashboard' : '/'} replace />} />
     </Routes>
   )
-}
-
-function ProtectedRoute({ isAuthenticated, children }) {
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />
-  }
-
-  return children
 }
 
 export default App

@@ -23,3 +23,49 @@ input {
   font: inherit;
 }
 
+.loading-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #475569;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-danger-small,
+.btn-large {
+  border: none;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #155dfc, #4f39f6);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #eef2ff;
+  color: #1d4ed8;
+}
+
+.btn-danger,
+.btn-danger-small {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-danger-small {
+  padding: 0.6rem 1rem;
+}
+
+.btn-large {
+  padding: 1rem 2.5rem;
+}
+

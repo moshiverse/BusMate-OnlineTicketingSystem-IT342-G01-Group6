@@ -23,8 +23,6 @@ public class Bus {
     @JoinColumn(name = "bus_type_id", nullable = false)
     private BusType busType;
 
-    private String amenities;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;

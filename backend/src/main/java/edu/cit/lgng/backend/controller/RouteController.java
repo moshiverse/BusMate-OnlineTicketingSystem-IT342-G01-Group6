@@ -25,4 +25,17 @@ public class RouteController {
     public ResponseEntity<Route> create(@RequestBody Route r) {
         return ResponseEntity.ok(service.create(r));
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<Route> update(@PathVariable Long id, @RequestBody Route route) {
+        return ResponseEntity.ok(service.update(id, route));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
