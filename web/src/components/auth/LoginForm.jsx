@@ -56,6 +56,7 @@ const LoginForm = () => {
   };
 
   const handleGoogleLogin = () => {
+    // Redirect to Spring Boot OAuth2 Google endpoint
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
@@ -63,9 +64,9 @@ const LoginForm = () => {
     <div className="auth-form-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Login to BusMate</h2>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="form-group">
           <label>Email</label>
           <input
@@ -77,7 +78,7 @@ const LoginForm = () => {
             placeholder="your@email.com"
           />
         </div>
-        
+
         <div className="form-group">
           <label>Password</label>
           <input
@@ -89,21 +90,22 @@ const LoginForm = () => {
             placeholder="••••••••"
           />
         </div>
-        
+
         <button type="submit" className="btn-primary" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
-        
+
         <div className="divider">OR</div>
-        
-        <button 
-          type="button" 
-          className="btn-google" 
+
+        {/* Google login button */}
+        <button
+          type="button"
+          className="btn-google"
           onClick={handleGoogleLogin}
         >
           <span>🔐</span> Continue with Google
         </button>
-        
+
         <p className="auth-link">
           Don't have an account? <a href="/signup">Sign up here</a>
         </p>

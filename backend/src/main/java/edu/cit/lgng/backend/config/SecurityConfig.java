@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import edu.cit.lgng.backend.config.JwtRequestFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -27,7 +26,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        RequestMatcher apiMatcher = (request) -> request.getRequestURI().startsWith("/api/");
+        RequestMatcher apiMatcher = request -> request.getRequestURI().startsWith("/api/");
 
         AuthenticationEntryPoint apiEntryPoint = (HttpServletRequest req, HttpServletResponse res, org.springframework.security.core.AuthenticationException ex) -> {
             if (apiMatcher.matches(req)) {
@@ -44,7 +43,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers("/api/routes/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
