@@ -3,6 +3,7 @@ import BusMateLayout from '../components/layout/BusMateLayout'
 import { useAuth } from '../context/AuthContext'
 import { bookingAPI } from '../api/axios'
 import { formatCurrency, formatDateLabel, formatTimeLabel, mergeDateTime } from '../utils/formatters'
+import { downloadTicketPDF } from '../utils/ticketPDF'
 import '../styles/MyBookingsPage.css'
 
 const tabs = [
@@ -21,7 +22,7 @@ const classifyBooking = (booking) => {
 }
 
 const toQrUrl = (text) =>
-  text ? `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(text)}` : null
+  text ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}` : null
 
 function MyBookingsPage({ onSignOut }) {
   const { user } = useAuth()
@@ -63,6 +64,22 @@ function MyBookingsPage({ onSignOut }) {
   }, [bookings])
 
   const currentBookings = grouped[activeTab] ?? []
+
+  const handleViewQR = (qrCodeText) => {
+    const qrUrl = toQrUrl(qrCodeText)
+    if (qrUrl) {
+      window.open(qrUrl, '_blank')
+    }
+  }
+
+  const handleDownloadPDF = async (booking) => {
+    try {
+      await downloadTicketPDF(booking)
+    } catch (error) {
+      console.error('Failed to generate PDF:', error)
+      alert('Failed to generate PDF. Please try again.')
+    }
+  }
 
   return (
     <BusMateLayout onSignOut={onSignOut}>
@@ -106,7 +123,6 @@ function MyBookingsPage({ onSignOut }) {
               const schedule = booking.schedule
               const routeLabel = `${schedule.route?.origin} → ${schedule.route?.destination}`
               const departure = `${formatDateLabel(schedule.travelDate)} · ${formatTimeLabel(schedule.departureTime)}`
-              const qrUrl = toQrUrl(booking.qrCodeText)
               const seatNumbers =
                 booking.bookingSeats?.map((seat) => seat.seatNumber) ?? booking.seatNumbers ?? []
               return (
@@ -114,7 +130,7 @@ function MyBookingsPage({ onSignOut }) {
                   <header>
                     <div>
                       <p className="eyebrow">Booking ID</p>
-                      <h3>{booking.id}</h3>
+                      <h3>BM-{String(booking.id).padStart(6, '0')}</h3>
                     </div>
                     <span className={`status-pill ${booking.status.toLowerCase()}`}>{booking.status}</span>
                   </header>
@@ -129,7 +145,7 @@ function MyBookingsPage({ onSignOut }) {
                     </div>
                     <div>
                       <p className="eyebrow">Seats</p>
-                      <h4>{seatNumbers.length ? seatNumbers.join(', ') : 'Seat info on e-ticket'}</h4>
+                      <h4>{seatNumbers.length ? seatNumbers.join(', ') : 'See e-ticket'}</h4>
                     </div>
                     <div>
                       <p className="eyebrow">Amount Paid</p>
@@ -137,20 +153,23 @@ function MyBookingsPage({ onSignOut }) {
                     </div>
                   </div>
                   <footer>
-                    {qrUrl && (
-                      <button type="button" className="btn-secondary" onClick={() => window.open(qrUrl, '_blank')}>
+                    {booking.qrCodeText && (
+                      <button 
+                        type="button" 
+                        className="btn-secondary" 
+                        onClick={() => handleViewQR(booking.qrCodeText)}
+                      >
                         View QR
                       </button>
                     )}
                     <button
                       type="button"
                       className="btn-secondary"
-                      onClick={() => window.print()}
-                      style={{ opacity: qrUrl ? 1 : 0.75 }}
+                      onClick={() => handleDownloadPDF(booking)}
                     >
                       Download PDF
                     </button>
-                    {booking.status === 'UPCOMING' && (
+                    {booking.status === 'CONFIRMED' && activeTab === 'upcoming' && (
                       <button type="button" className="btn-danger" disabled>
                         Cancel Trip
                       </button>
@@ -167,4 +186,3 @@ function MyBookingsPage({ onSignOut }) {
 }
 
 export default MyBookingsPage
-

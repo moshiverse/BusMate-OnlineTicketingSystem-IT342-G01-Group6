@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import BookingSection from '../components/Dashboard/BookingSection'
 import SeatSelector from '../components/booking/SeatSelector'
 import BookingConfirmation from '../components/booking/BookingConfirmation'
@@ -7,6 +7,7 @@ import BookingSuccess from '../components/booking/BookingSuccess'
 import BusMateLayout from '../components/layout/BusMateLayout'
 import { tripsFallback } from '../components/Dashboard/dashboardData'
 import { routesAPI, scheduleAPI } from '../api/axios'
+import { paymongoAPI } from '../api/paymongoAPI'
 import { formatCurrency, formatDateLabel, formatDuration, formatTimeLabel } from '../utils/formatters'
 import { useAuth } from '../context/AuthContext'
 import '../styles/BookingFlow.css'
@@ -28,6 +29,7 @@ const addMinutesToTime = (timeString, minutesToAdd) => {
 
 function BookingPage({ onSignOut }) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const [routes, setRoutes] = useState([])
   const [schedules, setSchedules] = useState([])
@@ -35,11 +37,50 @@ function BookingPage({ onSignOut }) {
   const [selectedRouteId, setSelectedRouteId] = useState('')
   const [travelDate, setTravelDate] = useState('')
   const [passengers, setPassengers] = useState(1)
-  const [step, setStep] = useState('list') // list | seats | confirm | success
+  const [step, setStep] = useState('list') // list | seats | confirm | processing | success
   const [selectedSchedule, setSelectedSchedule] = useState(null)
   const [selectedSeats, setSelectedSeats] = useState([])
   const [totalAmount, setTotalAmount] = useState(0)
   const [bookingResult, setBookingResult] = useState(null)
+
+  // Handle return from PayMongo (GCash, GrabPay, Maya, 3DS)
+  useEffect(() => {
+    const paymentIntentId = searchParams.get('payment_intent_id')
+    
+    if (paymentIntentId) {
+      setStep('processing')
+      
+      paymongoAPI.verifyPayment(paymentIntentId)
+        .then(response => {
+          if (response.data.success) {
+            // Fetch the booking details to show in success page
+            setBookingResult({
+              bookingId: response.data.bookingId,
+              qrCode: response.data.qrCodeText,
+              referenceCode: paymentIntentId,
+              schedule: selectedSchedule || {}, // May be empty if page was refreshed
+              seats: selectedSeats.length ? selectedSeats : [],
+              amount: totalAmount || 0,
+              passengerName: user?.name,
+            })
+            setStep('success')
+            // Clear the URL parameter without reload
+            window.history.replaceState({}, '', '/booking')
+          } else {
+            console.error('Payment verification failed:', response.data.error)
+            setStep('list')
+            // Clear the URL parameter
+            window.history.replaceState({}, '', '/booking')
+          }
+        })
+        .catch(err => {
+          console.error('Payment verification error:', err)
+          setStep('list')
+          // Clear the URL parameter
+          window.history.replaceState({}, '', '/booking')
+        })
+    }
+  }, [searchParams, user])
 
   useEffect(() => {
     let cancelled = false
@@ -144,6 +185,40 @@ function BookingPage({ onSignOut }) {
     setBookingResult(null)
   }
 
+  // Show processing state when verifying payment
+  if (step === 'processing') {
+    return (
+      <BusMateLayout onSignOut={onSignOut}>
+        <section className="booking-flow">
+          <div className="processing-state" style={{ 
+            background: '#fff', 
+            borderRadius: '1.5rem', 
+            padding: '4rem 2rem',
+            textAlign: 'center',
+            boxShadow: '0 2rem 4rem rgba(15, 23, 42, 0.08)'
+          }}>
+            <div className="spinner" style={{
+              width: '48px',
+              height: '48px',
+              border: '4px solid rgba(21, 93, 252, 0.2)',
+              borderTopColor: '#155dfc',
+              borderRadius: '50%',
+              margin: '0 auto 1.5rem',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            <h3 style={{ margin: '0 0 0.5rem', color: '#0f172a' }}>Verifying your payment...</h3>
+            <p style={{ color: '#64748b', margin: 0 }}>Please wait while we confirm your transaction.</p>
+          </div>
+        </section>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </BusMateLayout>
+    )
+  }
+
   return (
     <BusMateLayout onSignOut={onSignOut}>
       <section className="booking-flow">
@@ -231,4 +306,3 @@ function BookingPage({ onSignOut }) {
 }
 
 export default BookingPage
-
