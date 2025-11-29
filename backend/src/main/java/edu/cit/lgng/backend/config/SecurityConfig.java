@@ -46,7 +46,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1. Explicitly permit login, signup, and OAuth flow endpoints
                         .requestMatchers("/api/auth/login", "/api/auth/signup", "/oauth2/**", "/login/**").permitAll()
-                        
+
+                        // Paymongo webhook
+                        .requestMatchers("/api/paymongo/webhook").permitAll()
+
                         // 2. Allow access to unauthenticated resources (if any)
                         // .requestMatchers("/api/public/**").permitAll()
 

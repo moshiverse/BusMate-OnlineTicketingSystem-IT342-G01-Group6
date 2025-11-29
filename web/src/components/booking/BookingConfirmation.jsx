@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import PayMongoPayment from './PayMongoPayment'
 import { bookingAPI } from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { formatCurrency, formatDateLabel, formatTimeLabel } from '../../utils/formatters'
@@ -7,14 +8,11 @@ const BookingConfirmation = ({ schedule, selectedSeats, amount, onComplete, onCa
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [paymentMethod] = useState('gotyme')
+  const [booking, setBooking] = useState(null)
+  const [showPayment, setShowPayment] = useState(false)
 
-  const referenceCode = useMemo(
-    () => `BM-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 90 + 10)}`,
-    [],
-  )
-
-  const handleConfirmBooking = async () => {
+  // Step 1: Create the booking first (in PENDING status)
+  const handleCreateBooking = async () => {
     setLoading(true)
     setError('')
 
@@ -26,32 +24,55 @@ const BookingConfirmation = ({ schedule, selectedSeats, amount, onComplete, onCa
         seatNumbers: selectedSeats,
       })
 
-      await bookingAPI.confirm(bookingResponse.data.id, {
-        providerRef: referenceCode,
-        amount,
-      })
-
-      onComplete({
-        bookingId: bookingResponse.data.id,
-        qrCode: bookingResponse.data.qrCodeText,
-        referenceCode,
-      })
+      setBooking(bookingResponse.data)
+      setShowPayment(true) // Show PayMongo payment UI
     } catch (err) {
-      setError(err.response?.data?.error || 'Booking failed. Please try again.')
+      setError(err.response?.data?.error || err.response?.data || 'Failed to create booking. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
+  // Step 2: Handle successful payment from PayMongo
+  const handlePaymentSuccess = (result) => {
+    onComplete({
+      bookingId: result.bookingId || booking?.id,
+      qrCode: result.qrCode,
+      referenceCode: result.referenceCode,
+    })
+  }
+
+  // Cancel payment and go back to seat selection
+  const handlePaymentCancel = () => {
+    setShowPayment(false)
+    setBooking(null)
+    onCancel?.()
+  }
+
   const tripLabel = `${schedule.route?.origin} → ${schedule.route?.destination}`
   const departureLabel = `${formatDateLabel(schedule.travelDate)} · ${formatTimeLabel(schedule.departureTime)}`
 
+  // If showing payment UI
+  if (showPayment && booking) {
+    return (
+      <PayMongoPayment
+        bookingId={booking.id}
+        amount={amount}
+        schedule={schedule}
+        selectedSeats={selectedSeats}
+        onSuccess={handlePaymentSuccess}
+        onCancel={handlePaymentCancel}
+      />
+    )
+  }
+
+  // Initial booking summary view
   return (
     <div className="booking-confirmation">
       <div className="payment-card">
         <header>
-          <h3>GoTyme Payment</h3>
-          <p>Complete your payment to confirm your booking</p>
+          <h3>Confirm Your Booking</h3>
+          <p>Review your trip details before proceeding to payment</p>
         </header>
 
         <div className="total-amount">
@@ -72,35 +93,56 @@ const BookingConfirmation = ({ schedule, selectedSeats, amount, onComplete, onCa
             <p className="eyebrow">Seats</p>
             <h4>{selectedSeats.join(', ')}</h4>
           </div>
+          <div>
+            <p className="eyebrow">Passengers</p>
+            <h4>{selectedSeats.length} {selectedSeats.length > 1 ? 'persons' : 'person'}</h4>
+          </div>
         </div>
 
-        <div className="instruction-list">
-          <p>Follow these steps to complete your payment:</p>
-          <ol>
-            <li>Open your GoTyme Bank app</li>
-            <li>Select “Pay Bills” or “Send Money”</li>
-            <li>Enter the amount: {formatCurrency(amount, { withCents: true })}</li>
-            <li>Use reference: {referenceCode}</li>
-          </ol>
+        <div className="price-breakdown">
+          <div className="price-row">
+            <span>Price per seat</span>
+            <span>{formatCurrency(schedule.price, { withCents: true })}</span>
+          </div>
+          <div className="price-row">
+            <span>Number of seats</span>
+            <span>× {selectedSeats.length}</span>
+          </div>
+          <div className="price-row total">
+            <span>Total</span>
+            <strong>{formatCurrency(amount, { withCents: true })}</strong>
+          </div>
         </div>
 
-        <div className="demo-note">
-          <span role="img" aria-label="Info">
-            💡
-          </span>
-          This is a demo. In production, you’ll be redirected to the actual GoTyme payment gateway.
+        <div className="payment-methods-preview">
+          <p>Available Payment Methods:</p>
+          <div className="method-icons">
+            <span title="Credit/Debit Card">💳</span>
+            <span title="GCash">📱</span>
+            <span title="GrabPay">🚗</span>
+            <span title="Maya">💚</span>
+          </div>
         </div>
 
-        <div className="secure-note">🔒 Your payment is secured with 256-bit SSL encryption</div>
+        <div className="secure-note">🔒 All payments are secured by PayMongo with 256-bit encryption</div>
 
         {error && <div className="error-message">{error}</div>}
 
         <div className="confirmation-actions">
-          <button type="button" className="btn-secondary" onClick={() => onCancel?.()} disabled={loading}>
-            Cancel
+          <button 
+            type="button" 
+            className="btn-secondary" 
+            onClick={() => onCancel?.()} 
+            disabled={loading}
+          >
+            Back to Seats
           </button>
-          <button className="btn-primary btn-large" onClick={handleConfirmBooking} disabled={loading || !paymentMethod}>
-            {loading ? 'Processing...' : `Confirm Payment`}
+          <button 
+            className="btn-primary btn-large" 
+            onClick={handleCreateBooking} 
+            disabled={loading}
+          >
+            {loading ? 'Creating Booking...' : 'Proceed to Payment'}
           </button>
         </div>
       </div>
