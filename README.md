@@ -29,7 +29,7 @@ The system also provides an admin dashboard for operators to manage routes, sche
 | **Database**            | MySQL (via MySQL Workbench)                                    |
 | **Authentication**      | Google OAuth 2.0 (`spring-boot-starter-oauth2-client`)         |
 | **Payment Integration** | QRph                         |
-| **Design & Prototype**  | Figma                                                          |
+| **Design & Prototype**  | [Figma](https://www.figma.com/design/KuaOmc1hwzMqk76t4VsAvc/BusMate-OnlineTicketingSystem-IT342-G01-Group6?node-id=0-1&p=f&t=Ec10NE3HR3etOZOT-0) |
 | **Build Tool**          | Maven                                                          |
 | **Version Control**     | Git & GitHub                                                   |
 | **Java Version**        | JDK 21                                                         |

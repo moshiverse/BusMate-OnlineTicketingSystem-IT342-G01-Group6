@@ -20,8 +20,10 @@ public class UserService {
 
     // Normal user signup
     public User signup(String name, String email, String rawPassword) {
-        if (userRepository.findByEmail(email).isPresent())
+        // Check if email already exists and is not deleted
+        if (userRepository.findByEmailAndNotDeleted(email).isPresent()) {
             throw new RuntimeException("Email already exists");
+        }
 
         User user = User.builder()
                 .name(name)
@@ -35,8 +37,10 @@ public class UserService {
 
     // Admin creation (by Super Admin)
     public User createAdmin(String name, String email, String rawPassword) {
-        if (userRepository.findByEmail(email).isPresent())
+        // Check if email already exists and is not deleted
+        if (userRepository.findByEmailAndNotDeleted(email).isPresent()) {
             throw new RuntimeException("Email already exists");
+        }
 
         User admin = User.builder()
                 .name(name)
@@ -109,6 +113,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    public User findByEmailAndNotDeleted(String email) {
+        return userRepository.findByEmailAndNotDeleted(email)
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    }
+
     @Transactional
     public User updateProfile(Long userId, UpdateUserDto dto) {
         User user = userRepository.findById(userId)
@@ -131,7 +140,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // For now, perform a hard delete. We'll switch to soft-delete if needed later.
+        // Perform soft delete by marking with deletedAt timestamp
+        // Email can be reused because findByEmailAndNotDeleted ignores deleted accounts
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }

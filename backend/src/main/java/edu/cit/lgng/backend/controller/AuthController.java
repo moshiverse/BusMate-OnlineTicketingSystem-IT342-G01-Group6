@@ -49,12 +49,7 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(body.get("email"), body.get("password"))
         );
 
-        final User user = userService.findByEmail(body.get("email"));
-
-        // Check if account is deleted
-        if (user.getDeletedAt() != null) {
-            return ResponseEntity.status(403).body(Map.of("error", "Account has been deleted"));
-        }
+        final User user = userService.findByEmailAndNotDeleted(body.get("email"));
 
         final String token = jwtUtil.generateToken(user);
 
@@ -67,7 +62,6 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
-
 
         if (authentication == null ||
                 !authentication.isAuthenticated() ||
@@ -88,11 +82,6 @@ public class AuthController {
         }
 
         User user = userService.findByEmail(email);
-        
-        // Check if account is deleted
-        if (user.getDeletedAt() != null) {
-            return ResponseEntity.status(403).body(Map.of("error", "Account has been deleted"));
-        }
 
         UserPublicDto dto = new UserPublicDto(
             user.getId(),
