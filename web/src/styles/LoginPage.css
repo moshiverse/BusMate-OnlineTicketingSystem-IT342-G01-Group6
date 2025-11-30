@@ -67,11 +67,16 @@
   padding: 8px 18px;
   border-radius: 9px;
   cursor: pointer;
-  transition: color 0.1s;
+  transition: all 0.2s ease;
 }
 .login-tabs .active {
   color: #1762F7;
   background: #eaf3ff;
+}
+
+.login-tabs button:hover {
+  color: #1762F7;
+  background: rgba(23, 98, 247, 0.08);
 }
 .input-group label {
   font-size: 15px;
@@ -103,7 +108,12 @@
   padding: 12px;
   margin-top: 10px;
   cursor: pointer;
-  transition: background 0.18s;
+  transition: all 0.2s ease;
+}
+.login-btn:hover:not(:disabled) {
+  background: #0e4ed8;
+  box-shadow: 0 4px 12px rgba(23, 98, 247, 0.3);
+  transform: translateY(-2px);
 }
 .login-btn:disabled {
   opacity: 0.66;
@@ -124,6 +134,13 @@
   padding: 10px;
   cursor: pointer;
   margin-bottom: 7px;
+  transition: all 0.2s ease;
+}
+
+.google-btn:hover {
+  background: #f0f4ff;
+  box-shadow: 0 2px 8px rgba(23, 98, 247, 0.2);
+  transform: translateY(-1px);
 }
 .error {
   color: #e22134;

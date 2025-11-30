@@ -26,6 +26,7 @@ export const authAPI = {
   transferSuperAdmin: (toUserId) => api.post(`/auth/transfer-super-admin/${toUserId}`),
   updateProfile: (data) => api.patch('/auth/me', data),
   deleteAccount: () => api.delete('/auth/me'),
+  deleteUser: (id) => api.delete(`/auth/users/${id}`),
 };
 
 // Routes API

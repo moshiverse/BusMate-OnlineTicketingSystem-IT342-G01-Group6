@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import BookingSection from '../components/Dashboard/BookingSection'
 import SeatSelector from '../components/booking/SeatSelector'
 import BookingConfirmation from '../components/booking/BookingConfirmation'
@@ -29,6 +29,7 @@ const addMinutesToTime = (timeString, minutesToAdd) => {
 
 function BookingPage({ onSignOut }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const [routes, setRoutes] = useState([])
@@ -37,8 +38,8 @@ function BookingPage({ onSignOut }) {
   const [selectedRouteId, setSelectedRouteId] = useState('')
   const [travelDate, setTravelDate] = useState('')
   const [passengers, setPassengers] = useState(1)
-  const [step, setStep] = useState('list') // list | seats | confirm | processing | success
-  const [selectedSchedule, setSelectedSchedule] = useState(null)
+  const [step, setStep] = useState(location.state?.step || 'list') // list | seats | confirm | processing | success
+  const [selectedSchedule, setSelectedSchedule] = useState(location.state?.selectedSchedule || null)
   const [selectedSeats, setSelectedSeats] = useState([])
   const [totalAmount, setTotalAmount] = useState(0)
   const [bookingResult, setBookingResult] = useState(null)

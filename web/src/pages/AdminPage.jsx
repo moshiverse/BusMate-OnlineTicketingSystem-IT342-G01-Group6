@@ -1,16 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import BusMateLayout from '../components/layout/BusMateLayout'
-import UserManagement from '../components/admin/UserManagement'
-import BusManagement from '../components/admin/BusManagement'
-import RouteManagement from '../components/admin/RouteManagement'
-import ScheduleManagement from '../components/admin/ScheduleManagement'
-import BusTypeManagement from '../components/admin/BusTypeManagement'
 import { bookingAPI, busAPI, routesAPI, scheduleAPI } from '../api/axios'
 import { formatCurrency } from '../utils/formatters'
 import '../styles/AdminDashboard.css'
 
+
 const AdminPage = ({ onSignOut }) => {
-  const [activeSection, setActiveSection] = useState(null) // null | 'users' | 'bus-types' | 'buses' | 'routes' | 'schedules'
   const [stats, setStats] = useState({
     totalBookings: 0,
     activeBuses: 0,
@@ -20,8 +15,10 @@ const AdminPage = ({ onSignOut }) => {
   const [recentBookings, setRecentBookings] = useState([])
   const [loading, setLoading] = useState(true)
 
+
   useEffect(() => {
     let cancelled = false
+
 
     const fetchDashboard = async () => {
       try {
@@ -32,15 +29,19 @@ const AdminPage = ({ onSignOut }) => {
           bookingAPI.getAll(),
         ])
 
+
         if (cancelled) return
+
 
         const buses = busesRes.data ?? []
         const routes = routesRes.data ?? []
         const schedules = schedulesRes.data ?? []
         const bookings = bookingsRes.data ?? []
 
+
         const now = new Date()
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
 
         const revenueMtd = bookings
           .filter(
@@ -51,6 +52,7 @@ const AdminPage = ({ onSignOut }) => {
           )
           .reduce((sum, b) => sum + Number(b.amount || 0), 0)
 
+
         setStats({
           totalBookings: bookings.length,
           activeBuses: buses.filter((b) => b.status === 'ACTIVE').length,
@@ -59,9 +61,11 @@ const AdminPage = ({ onSignOut }) => {
           upcomingTrips: schedules.length,
         })
 
+
         const sortedBookings = [...bookings]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5)
+
 
         setRecentBookings(sortedBookings)
       } catch (error) {
@@ -71,68 +75,23 @@ const AdminPage = ({ onSignOut }) => {
       }
     }
 
+
     fetchDashboard()
     return () => {
       cancelled = true
     }
   }, [])
 
-  const managementSectionTitle = useMemo(() => {
-    switch (activeSection) {
-      case 'users':
-        return 'Manage Users'
-      case 'bus-types':
-        return 'Manage Bus Types'
-      case 'buses':
-        return 'Manage Buses'
-      case 'routes':
-        return 'Manage Routes'
-      case 'schedules':
-        return 'Manage Schedules'
-      default:
-        return ''
-    }
-  }, [activeSection])
-
-  const renderManagementSection = () => {
-    if (!activeSection) return null
-
-    return (
-      <section className="admin-panel">
-        <div className="admin-panel-header">
-          <button type="button" className="btn-secondary" onClick={() => setActiveSection(null)}>
-            ← Back to Dashboard
-          </button>
-          <h2>{managementSectionTitle}</h2>
-        </div>
-
-        <div className="admin-panel-body">
-          {activeSection === 'users' && <UserManagement />}
-          {activeSection === 'bus-types' && <BusTypeManagement />}
-          {activeSection === 'buses' && <BusManagement />}
-          {activeSection === 'routes' && <RouteManagement />}
-          {activeSection === 'schedules' && <ScheduleManagement />}
-        </div>
-      </section>
-    )
-  }
-
   return (
     <BusMateLayout onSignOut={onSignOut}>
       <section className="admin-dashboard-page">
         <header className="admin-dashboard-header">
           <div>
-            <button
-              type="button"
-              className="admin-back-link"
-              onClick={() => window.history.back()}
-            >
-              ← Back to Home
-            </button>
             <h1>Admin Dashboard</h1>
             <p>Manage your bus operations</p>
           </div>
         </header>
+
 
         <section className="admin-stats-grid">
           <article className="admin-stat-card">
@@ -153,58 +112,64 @@ const AdminPage = ({ onSignOut }) => {
           </article>
         </section>
 
+
         <section className="admin-actions-grid">
           <article
             className="admin-action-card"
-            onClick={() => setActiveSection('bus-types')}
+            onClick={() => window.location.href = '/admin/buses'}
             role="button"
             tabIndex={0}
           >
-            <h3>Manage Bus Types</h3>
-            <p>Define different types of buses</p>
-          </article>
-          <article
-            className="admin-action-card"
-            onClick={() => setActiveSection('buses')}
-            role="button"
-            tabIndex={0}
-          >
+            <div className="action-icon">🚌</div>
             <h3>Manage Buses</h3>
-            <p>Add, edit, or remove buses from your fleet</p>
+            <p>Add, edit, or remove buses</p>
           </article>
           <article
             className="admin-action-card"
-            onClick={() => setActiveSection('routes')}
+            onClick={() => window.location.href = '/admin/bus-types'}
             role="button"
             tabIndex={0}
           >
+            <div className="action-icon">🚐</div>
+            <h3>Bus Types</h3>
+            <p>Manage bus categories</p>
+          </article>
+          <article
+            className="admin-action-card"
+            onClick={() => window.location.href = '/admin/routes'}
+            role="button"
+            tabIndex={0}
+          >
+            <div className="action-icon">🗺️</div>
             <h3>Manage Routes</h3>
             <p>Configure bus routes</p>
           </article>
           <article
             className="admin-action-card"
-            onClick={() => setActiveSection('schedules')}
+            onClick={() => window.location.href = '/admin/schedules'}
             role="button"
             tabIndex={0}
           >
+            <div className="action-icon">📅</div>
             <h3>Manage Schedules</h3>
             <p>Set departure times</p>
           </article>
           <article
             className="admin-action-card"
-            onClick={() => setActiveSection('users')}
+            onClick={() => window.location.href = '/admin/users'}
             role="button"
             tabIndex={0}
           >
+            <div className="action-icon">👥</div>
             <h3>User Management</h3>
-            <p>View and manage user accounts</p>
+            <p>View and manage users</p>
           </article>
         </section>
 
         <section className="admin-recent-bookings">
           <div className="admin-recent-header">
             <h2>Recent Bookings</h2>
-            {/* Placeholder for future “View All” link */}
+            {/* Placeholder for future "View All" link */}
           </div>
           {loading ? (
             <p className="admin-loading">Syncing bookings…</p>
@@ -244,11 +209,10 @@ const AdminPage = ({ onSignOut }) => {
             </div>
           )}
         </section>
-
-        {renderManagementSection()}
       </section>
     </BusMateLayout>
   )
 }
+
 
 export default AdminPage

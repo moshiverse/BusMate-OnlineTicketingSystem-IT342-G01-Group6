@@ -43,6 +43,7 @@ input {
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
@@ -50,15 +51,33 @@ input {
   color: #fff;
 }
 
+.btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(21, 93, 252, 0.3);
+  transform: translateY(-2px);
+}
+
 .btn-secondary {
   background: #eef2ff;
   color: #1d4ed8;
+}
+
+.btn-secondary:hover {
+  background: #dbeafe;
+  box-shadow: 0 2px 8px rgba(21, 93, 252, 0.2);
+  transform: translateY(-1px);
 }
 
 .btn-danger,
 .btn-danger-small {
   background: #fee2e2;
   color: #b91c1c;
+}
+
+.btn-danger:hover,
+.btn-danger-small:hover {
+  background: #fecaca;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.2);
+  transform: translateY(-1px);
 }
 
 .btn-danger-small {

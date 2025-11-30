@@ -1,0 +1,352 @@
+/* User Management Page */
+.user-management-page {
+  width: 100%;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Main Content Area - Centered */
+.user-management-content {
+  flex: 1;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Page Header */
+.user-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 24px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.user-header-content {
+  flex: 1;
+  min-width: 300px;
+}
+
+.user-back-link {
+  background: none;
+  border: none;
+  color: #1e293b;
+  padding: 0;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-back-link:hover {
+  color: #0f172a;
+}
+
+.user-page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #1e293b;
+}
+
+.user-page-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Add User Button */
+.user-add-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  height: 40px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.user-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+/* Add User Form */
+.user-add-form-container {
+  background: #ffffff;
+  border: 0.8px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 1200px;
+}
+
+.user-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-add-form h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.form-group input,
+.form-select {
+  padding: 10px 12px;
+  border: 0.8px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1e293b;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input:disabled {
+  background-color: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #1e293b;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Users Cards Container */
+.users-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* User Card */
+.user-card {
+  background: #ffffff;
+  border: 0.8px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  transition: all 0.2s;
+}
+
+.user-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.user-card-content {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  flex: 1;
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 15px;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 600;
+}
+
+.user-role-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+  margin: 0;
+}
+
+.user-role-badge[data-role="super_admin"],
+.user-role-badge[data-role="admin"] {
+  background-color: #fef08a;
+  color: #92400e;
+}
+
+.user-role-badge[data-role="user"] {
+  background-color: #dbeafe;
+  color: #1447e6;
+}
+
+.user-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.user-action-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+  color: #1e293b;
+}
+
+.user-action-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.user-action-btn.delete:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .user-management-content {
+    padding: 24px;
+  }
+
+  .user-card-content {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-content {
+    padding: 16px;
+  }
+
+  .user-page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .user-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .user-card-content {
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .user-page-header h1 {
+    font-size: 24px;
+  }
+}
