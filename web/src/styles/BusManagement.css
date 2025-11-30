@@ -1,0 +1,428 @@
+/* Bus Management Page */
+.bus-management-page {
+  width: 100%;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Main Content Area - Centered */
+.bus-management-content {
+  flex: 1;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Page Header - Centered */
+.bus-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 24px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.bus-header-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.bus-back-btn {
+  background: none;
+  border: none;
+  color: #1e293b;
+  padding: 0;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bus-back-btn:hover {
+  color: #0f172a;
+}
+
+.bus-page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #1e293b;
+}
+
+.bus-page-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.bus-add-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  height: 40px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.bus-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+/* Add Bus Form - Centered */
+.bus-form-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 1200px;
+}
+
+.bus-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bus-form h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1e293b;
+  font-family: inherit;
+  background-color: #ffffff;
+  transition: all 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #94a3b8;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #cbd5e1;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.btn-secondary {
+  background-color: #f8fafc;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Bus Cards Grid - Centered and 3 columns */
+.bus-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Individual Bus Card */
+.bus-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  min-height: 360px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.bus-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Card Header */
+.bus-card-header {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bus-card-info {
+  flex: 1;
+}
+
+.bus-card-number {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.bus-card-type {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1447e6;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.bus-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bus-action-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  color: #1e293b;
+}
+
+.bus-action-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.bus-action-btn.delete:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Card Body */
+.bus-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bus-detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bus-detail-label {
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 400;
+  margin: 0;
+}
+
+.bus-detail-value {
+  font-size: 16px;
+  color: #1e293b;
+  font-weight: 500;
+  margin: 0;
+}
+
+.bus-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.amenity-badge {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #1e293b;
+  font-weight: 400;
+}
+
+/* Card Footer */
+.bus-card-footer {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bus-status-label {
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 400;
+  margin: 0;
+}
+
+.bus-status-badge {
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.bus-status-badge.status-active {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #b9f8cf;
+}
+
+.bus-status-badge.status-maintenance {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.bus-status-badge.status-retired {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .bus-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bus-management-content {
+    padding: 30px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bus-management-content {
+    padding: 24px 12px;
+  }
+
+  .bus-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bus-header-info {
+    width: 100%;
+  }
+
+  .bus-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bus-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

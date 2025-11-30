@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom'
 import styles from './RouteCard.module.css'
 
 function RouteCard({
+  id,
   from,
   to,
   distance,
@@ -10,8 +12,20 @@ function RouteCard({
   extras,
   badge,
   variant = 'default',
+  rawSchedule,
 }) {
+  const navigate = useNavigate()
   const pillData = extras ?? extra ?? []
+
+  const handleBookNow = () => {
+    if (rawSchedule) {
+      // Navigate directly to seat selection with schedule data
+      navigate('/booking', { state: { selectedSchedule: rawSchedule, step: 'seats' } })
+    } else {
+      // Fallback to booking page if no schedule info
+      navigate('/booking')
+    }
+  }
   return (
     <article className={`${styles.card} ${variant === 'compact' ? styles.compact : ''}`}>
       <div className={styles.topRow}>
@@ -55,7 +69,7 @@ function RouteCard({
         </div>
       )}
 
-      <button type="button" className={styles.bookButton}>
+      <button type="button" className={styles.bookButton} onClick={handleBookNow}>
         Book Now
       </button>
     </article>

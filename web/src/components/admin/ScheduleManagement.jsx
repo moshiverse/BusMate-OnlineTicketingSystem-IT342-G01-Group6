@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { scheduleAPI, routesAPI, busAPI, seatAPI } from '../../api/axios';
+import BusMateLayout from '../layout/BusMateLayout';
+import '../../styles/ScheduleManagement.css';
 
 const ScheduleManagement = () => {
+  const navigate = useNavigate();
   const [schedules, setSchedules] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [buses, setBuses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     routeId: '',
@@ -24,6 +29,7 @@ const ScheduleManagement = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       const [schedulesRes, routesRes, busesRes] = await Promise.all([
         scheduleAPI.getAll(),
         routesAPI.getAll(),
@@ -34,6 +40,8 @@ const ScheduleManagement = () => {
       setBuses(busesRes.data);
     } catch (error) {
       console.error('Failed to load data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +92,9 @@ const ScheduleManagement = () => {
         await scheduleAPI.delete(scheduleId);
         loadData();
       } catch (error) {
-        alert('Failed to delete schedule');
+        const errorMsg = error.response?.data?.error || error.response?.data || error.message || 'Failed to delete schedule';
+        alert(`Failed to delete schedule: ${errorMsg}`);
+        console.error('Delete error:', error);
       }
     }
   };
@@ -103,138 +113,211 @@ const ScheduleManagement = () => {
     setEditingSchedule(null);
   };
 
+  const handleBackToDashboard = () => {
+    navigate('/admin');
+  };
+
+  if (loading) {
+    return (
+      <BusMateLayout>
+        <div className="schedule-management-page">
+          <div className="schedule-management-content">
+            <p style={{ textAlign: 'center', color: '#64748b', marginTop: '2rem' }}>Loading schedules...</p>
+          </div>
+        </div>
+      </BusMateLayout>
+    );
+  }
+
   return (
-    <div className="admin-section">
-      <div className="section-header">
-        <h2>Schedule Management</h2>
-        <button className="btn-primary" onClick={() => showForm ? resetForm() : setShowForm(true)}>
-          {showForm ? 'Cancel' : 'Add Schedule'}
-        </button>
-      </div>
-
-      {showForm && (
-        <form className="admin-form" onSubmit={handleSubmit}>
-          <h3>{editingSchedule ? 'Edit Schedule' : 'Add New Schedule'}</h3>
-
-          <select
-            value={formData.routeId}
-            onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
-            required
-          >
-            <option value="">Select Route</option>
-            {routes.map(route => (
-              <option key={route.id} value={route.id}>
-                {route.origin} → {route.destination}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={formData.busId}
-            onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
-            required
-          >
-            <option value="">Select Bus</option>
-            {buses.filter(bus => bus.status === 'ACTIVE').map(bus => (
-              <option key={bus.id} value={bus.id}>
-                {bus.plateNumber} - {bus.busType?.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={formData.travelDate}
-            onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
-            required
-          />
-
-          <input
-            type="datetime-local"
-            value={formData.departureTime}
-            onChange={(e) => setFormData({ ...formData, departureTime: e.target.value })}
-            required
-          />
-
-          <input
-            type="datetime-local"
-            value={formData.arrivalTime}
-            onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
-            required
-          />
-
-          <input
-            type="number"
-            placeholder="Price"
-            step="0.01"
-            value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-            required
-          />
-
-          <input
-            type="number"
-            placeholder="Available Seats"
-            value={formData.availableSeats}
-            onChange={(e) => setFormData({ ...formData, availableSeats: e.target.value })}
-            required
-          />
-
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="submit" className="btn-primary">
-              {editingSchedule ? 'Update Schedule' : 'Create Schedule'}
-            </button>
-            <button type="button" className="btn-secondary" onClick={resetForm}>
-              Cancel
+    <BusMateLayout>
+      <div className="schedule-management-page">
+        <div className="schedule-management-content">
+          {/* Page Header */}
+          <div className="schedule-page-header">
+            <div className="schedule-header-content">
+              <button className="schedule-back-link" onClick={handleBackToDashboard}>
+                ← Back to Dashboard
+              </button>
+              <h1>Manage Schedules</h1>
+              <p>Add, edit, or remove bus schedules</p>
+            </div>
+            <button className="schedule-add-btn" onClick={() => setShowForm(!showForm)}>
+              + Add Schedule
             </button>
           </div>
-        </form>
-      )}
 
-      {/* Table */}
-      <div className="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Route</th>
-              <th>Bus</th>
-              <th>Travel Date</th>
-              <th>Departure</th>
-              <th>Arrival</th>
-              <th>Price</th>
-              <th>Available Seats</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schedules.map(schedule => (
-              <tr key={schedule.id}>
-                <td>{schedule.id}</td>
-                <td>{schedule.route?.origin} → {schedule.route?.destination}</td>
-                <td>{schedule.bus?.plateNumber}</td>
-                <td>{schedule.travelDate}</td>
-                <td>{new Date(schedule.departureTime).toLocaleString()}</td>
-                <td>{new Date(schedule.arrivalTime).toLocaleString()}</td>
-                <td>₱{schedule.price}</td>
-                <td>{schedule.availableSeats}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '5px' }}>
-                    <button className="btn-secondary btn-small" onClick={() => handleEdit(schedule)}>
-                      Edit
-                    </button>
-                    <button className="btn-danger btn-small" onClick={() => handleDelete(schedule.id)}>
-                      Delete
-                    </button>
+          {/* Add Schedule Form */}
+          {showForm && (
+            <div className="schedule-add-form-container">
+              <form onSubmit={handleSubmit} className="schedule-add-form">
+                <h3>{editingSchedule ? 'Edit Schedule' : 'Add New Schedule'}</h3>
+
+                <div className="form-group">
+                  <label>Route</label>
+                  <select
+                    value={formData.routeId}
+                    onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
+                    required
+                    className="form-select"
+                  >
+                    <option value="">Select Route</option>
+                    {routes.map(route => (
+                      <option key={route.id} value={route.id}>
+                        {route.origin} → {route.destination}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Bus</label>
+                  <select
+                    value={formData.busId}
+                    onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
+                    required
+                    className="form-select"
+                  >
+                    <option value="">Select Bus</option>
+                    {buses.filter(bus => bus.status === 'ACTIVE').map(bus => (
+                      <option key={bus.id} value={bus.id}>
+                        {bus.plateNumber} - {bus.busType?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Travel Date</label>
+                  <input
+                    type="date"
+                    value={formData.travelDate}
+                    onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Departure Time</label>
+                  <input
+                    type="datetime-local"
+                    value={formData.departureTime}
+                    onChange={(e) => setFormData({ ...formData, departureTime: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Arrival Time</label>
+                  <input
+                    type="datetime-local"
+                    value={formData.arrivalTime}
+                    onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Price</label>
+                  <input
+                    type="number"
+                    placeholder="Enter price"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Available Seats</label>
+                  <input
+                    type="number"
+                    placeholder="Enter available seats"
+                    value={formData.availableSeats}
+                    onChange={(e) => setFormData({ ...formData, availableSeats: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="btn-primary">
+                    {editingSchedule ? 'Update Schedule' : 'Create Schedule'}
+                  </button>
+                  <button type="button" className="btn-secondary" onClick={resetForm}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Schedules Cards */}
+          {schedules.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#64748b', marginTop: '2rem' }}>No schedules added yet. Click "Add Schedule" to create one.</p>
+          ) : (
+            <div className="schedules-cards-container">
+              {schedules.map(schedule => {
+                const departureTime = new Date(schedule.departureTime);
+                const departureHours = String(departureTime.getHours()).padStart(2, '0');
+                const departureMinutes = String(departureTime.getMinutes()).padStart(2, '0');
+                
+                return (
+                  <div key={schedule.id} className="schedule-card">
+                    <div className="schedule-card-content">
+                      <div className="schedule-card-section">
+                        <div className="schedule-card-label">Route</div>
+                        <div className="schedule-card-value">
+                          {schedule.route?.origin} → {schedule.route?.destination}
+                        </div>
+                      </div>
+
+                      <div className="schedule-card-section">
+                        <div className="schedule-card-label">Bus</div>
+                        <div className="schedule-card-value">{schedule.bus?.plateNumber}</div>
+                        <div className="schedule-bus-badge">{schedule.bus?.busType?.name}</div>
+                      </div>
+
+                      <div className="schedule-card-section">
+                        <div className="schedule-card-label">Date & Time</div>
+                        <div className="schedule-card-value">{schedule.travelDate}</div>
+                        <div className="schedule-card-time">
+                          <span className="time-icon">🕐</span>
+                          <span>{departureHours}:{departureMinutes}</span>
+                        </div>
+                      </div>
+
+                      <div className="schedule-card-section">
+                        <div className="schedule-card-label">Price</div>
+                        <div className="schedule-card-price">₱{schedule.price}</div>
+                        <div className="schedule-card-seats">{schedule.availableSeats} seats available</div>
+                      </div>
+                    </div>
+
+                    <div className="schedule-card-actions">
+                      <button
+                        className="schedule-action-btn edit"
+                        onClick={() => handleEdit(schedule)}
+                        title="Edit"
+                      >
+                        ✎
+                      </button>
+                      <button
+                        className="schedule-action-btn delete"
+                        onClick={() => handleDelete(schedule.id)}
+                        title="Delete"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
-
-    </div>
+    </BusMateLayout>
   );
 };
 

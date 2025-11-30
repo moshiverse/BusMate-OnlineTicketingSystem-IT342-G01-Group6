@@ -25,6 +25,8 @@
   gap: 0.6rem;
   font-weight: 700;
   font-size: 1.2rem;
+  text-decoration: none;
+  color: #0f172a;
 }
 
 .brandIcon {
@@ -61,6 +63,12 @@
   color: #1d4ed8;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatar:hover {
+  background: #c7d2fe;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.2);
 }
 
 .userMenu {
@@ -78,6 +86,12 @@
   cursor: pointer;
   min-width: 190px;
   box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
+}
+
+.userButton:hover {
+  border-color: #155dfc;
+  box-shadow: 0 0.75rem 2rem rgba(21, 93, 252, 0.15);
 }
 
 .userBadge {
@@ -134,10 +148,21 @@
   color: #1d4ed8;
   text-decoration: none;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userDropdown a:hover,
+.userDropdown button:hover {
+  background: #e0e7ff;
+  transform: translateX(2px);
 }
 
 .userDropdown button {
   color: #dc2626;
+}
+
+.userDropdown button:hover {
+  background: #fee2e2;
 }
 
 .userDetails {
@@ -256,6 +281,13 @@
   font-weight: 500;
   background: #fff;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.heroCard button:hover {
+  background: #f8fafc;
+  border-color: #155dfc;
+  box-shadow: 0 2px 8px rgba(21, 93, 252, 0.2);
 }
 
 .heroCard input {
@@ -274,6 +306,12 @@
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.searchButton:hover {
+  box-shadow: 0 4px 12px rgba(21, 93, 252, 0.4);
+  transform: translateY(-2px);
 }
 
 .features,
@@ -329,13 +367,25 @@
 }
 
 .outlineButton {
-  border: 1px solid #155dfc;
-  border-radius: 0.75rem;
-  padding: 0.65rem 1.5rem;
-  color: #155dfc;
-  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  color: white;
+  background: #2563eb;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.outlineButton:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
 }
 
 .routeGrid {
@@ -383,6 +433,7 @@
   padding: 0.85rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .ctaButtons button:first-of-type {
@@ -391,10 +442,30 @@
   box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.25);
 }
 
+.ctaButtons button:first-of-type:hover {
+  background: #f0f4ff;
+  box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.35);
+  transform: translateY(-2px);
+}
+
 .ctaOutline {
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  background: transparent !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #2563eb;
   color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 24px;
+  transition: all 0.2s ease;
+}
+
+.ctaOutline:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
 }
 
 .stats {
@@ -506,6 +577,13 @@
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.missingBanner button:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(21, 93, 252, 0.4);
+  transform: translateY(-2px);
 }
 
 .itinerary {
