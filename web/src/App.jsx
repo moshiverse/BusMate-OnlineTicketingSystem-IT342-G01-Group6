@@ -7,6 +7,11 @@ import OAuthRedirectPage from './pages/OAuthRedirectPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminPage from './pages/AdminPage'
 import MyBookingsPage from './pages/MyBookingsPage'
+import BusManagementPage from './components/admin/BusManagementPage'
+import BusTypeManagement from './components/admin/BusTypeManagement'
+import RouteManagement from './components/admin/RouteManagement'
+import ScheduleManagement from './components/admin/ScheduleManagement'
+import UserManagementPage from './pages/UserManagementPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -86,6 +91,46 @@ function App() {
         element={
           <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
             <AdminPage onSignOut={handleSignOut} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/buses"
+        element={
+          <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
+            <BusManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/bus-types"
+        element={
+          <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
+            <BusTypeManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/routes"
+        element={
+          <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
+            <RouteManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/schedules"
+        element={
+          <ProtectedRoute requiredRole={['ADMIN', 'SUPER_ADMIN']}>
+            <ScheduleManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute requiredRole={['SUPER_ADMIN']}>
+            <UserManagementPage />
           </ProtectedRoute>
         }
       />

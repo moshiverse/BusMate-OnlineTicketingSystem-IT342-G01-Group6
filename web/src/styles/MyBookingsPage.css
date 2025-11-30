@@ -49,6 +49,12 @@
   font-weight: 600;
   color: #475569;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-tabs button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: #0f172a;
 }
 
 .booking-tabs button.active {
@@ -119,6 +125,14 @@
   border-radius: 0.85rem;
   padding: 0.7rem 1.2rem;
   font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.2);
+  transform: translateY(-1px);
 }
 
 .empty-state {

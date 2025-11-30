@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../../styles/AdminDashboard.css';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="admin-dashboard-page">
       {/* Header Section */}
@@ -47,27 +54,93 @@ const AdminDashboard = () => {
 
       {/* Action Cards Grid */}
       <div className="admin-actions-grid">
-        <a href="/admin/buses" className="admin-action-card">
+        <button 
+          className="admin-action-card"
+          onClick={() => handleNavigate('/admin/buses')}
+        >
           <div className="action-icon buses-icon-large"></div>
           <h3>Manage Buses</h3>
           <p>Add, edit, or remove buses</p>
-        </a>
-        <a href="/admin/routes" className="admin-action-card">
+        </button>
+        <button 
+          className="admin-action-card"
+          onClick={() => handleNavigate('/admin/routes')}
+        >
           <div className="action-icon routes-icon-large"></div>
           <h3>Manage Routes</h3>
           <p>Configure bus routes</p>
-        </a>
-        <a href="/admin/schedules" className="admin-action-card">
+        </button>
+        <button 
+          className="admin-action-card"
+          onClick={() => handleNavigate('/admin/schedules')}
+        >
           <div className="action-icon schedules-icon-large"></div>
           <h3>Manage Schedules</h3>
           <p>Set departure times</p>
-        </a>
-        <a href="/admin/reports" className="admin-action-card">
+        </button>
+        <button 
+          className="admin-action-card"
+          onClick={() => handleNavigate('/admin/reports')}
+        >
           <div className="action-icon reports-icon-large"></div>
           <h3>Reports</h3>
           <p>View analytics & reports</p>
-        </a>
+        </button>
       </div>
+
+      {/* Recent Bookings Section */}
+      <div className="admin-recent-bookings">
+        <div className="admin-recent-header">
+          <h2>Recent Bookings</h2>
+          <button className="btn btn-outlined btn-small">View All</button>
+        </div>
+        
+        <div className="admin-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Route</th>
+                <th>Passenger</th>
+                <th>Seats</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>BK-001</td>
+                <td>Manila → Baguio</td>
+                <td>Juan Dela Cruz</td>
+                <td>2</td>
+                <td className="amount">₱1,300</td>
+                <td><span className="status-pill status-confirmed">confirmed</span></td>
+              </tr>
+              <tr>
+                <td>BK-002</td>
+                <td>Cebu → Bohol</td>
+                <td>Maria Santos</td>
+                <td>1</td>
+                <td className="amount">₱450</td>
+                <td><span className="status-pill status-confirmed">confirmed</span></td>
+              </tr>
+              <tr>
+                <td>BK-003</td>
+                <td>Manila → Iloilo</td>
+                <td>Pedro Reyes</td>
+                <td>3</td>
+                <td className="amount">₱3,600</td>
+                <td><span className="status-pill status-cancelled">cancelled</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
 
       {/* Recent Bookings Section */}
       <div className="admin-recent-bookings">

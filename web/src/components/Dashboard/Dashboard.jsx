@@ -9,8 +9,8 @@ import { formatCurrency, formatDuration } from '../../utils/formatters'
 
 function Dashboard({ onSignOut }) {
   const navigate = useNavigate()
-  const [popularRoutes, setPopularRoutes] = useState(dashboardFallback.popularRoutes)
-  const [stats, setStats] = useState(dashboardFallback.stats)
+  const [popularRoutes, setPopularRoutes] = useState([])
+  const [stats, setStats] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,21 +39,21 @@ function Dashboard({ onSignOut }) {
           return acc
         }, {})
 
-        const hydratedRoutes = routes.map((route) => {
-          const statsForRoute = routeStats[route.id]
-          return {
-            id: route.id,
-            from: route.origin,
-            to: route.destination,
-            distance: route.distanceKm ? `${route.distanceKm} km` : '—',
-            duration: route.durationMinutes ? formatDuration(route.durationMinutes) : '—',
-            price:
-              statsForRoute && statsForRoute.minPrice !== Number.MAX_SAFE_INTEGER
-                ? formatCurrency(statsForRoute.minPrice)
-                : null,
-            extras: statsForRoute ? [`🚌 ${statsForRoute.count} trips scheduled`] : [],
-          }
-        })
+        // Only show routes that have schedules (trips available)
+        const hydratedRoutes = routes
+          .filter((route) => routeStats[route.id]) // Only routes with schedules
+          .map((route) => {
+            const statsForRoute = routeStats[route.id]
+            return {
+              id: route.id,
+              from: route.origin,
+              to: route.destination,
+              distance: route.distanceKm ? `${route.distanceKm} km` : '—',
+              duration: route.durationMinutes ? formatDuration(route.durationMinutes) : '—',
+              price: formatCurrency(statsForRoute.minPrice),
+              extras: [`🚌 ${statsForRoute.count} trips scheduled`],
+            }
+          })
 
         setPopularRoutes(hydratedRoutes.slice(0, 3))
 
@@ -65,6 +65,13 @@ function Dashboard({ onSignOut }) {
         ])
       } catch (error) {
         console.error('Failed to sync dashboard data', error)
+        // Show empty state instead of fallback
+        setPopularRoutes([])
+        setStats([
+          { value: '0', label: 'Upcoming Trips' },
+          { value: '0', label: 'Routes Available' },
+          { value: '0', label: 'Seats Live' },
+        ])
       } finally {
         if (isMounted) setLoading(false)
       }
@@ -89,27 +96,6 @@ function Dashboard({ onSignOut }) {
           </h1>
           <p className={styles.heroSubtitle}>{hero.description}</p>
         </div>
-        <form className={styles.heroCard}>
-          <label>
-            <span>From</span>
-            <button type="button">Origin</button>
-          </label>
-          <label>
-            <span>To</span>
-            <button type="button">Destination</button>
-          </label>
-          <label>
-            <span>Date</span>
-            <input type="text" placeholder="dd/mm/yyyy" />
-          </label>
-          <label>
-            <span>Passengers</span>
-            <button type="button">1</button>
-          </label>
-          <button type="button" className={styles.searchButton}>
-            Search
-          </button>
-        </form>
       </section>
 
       <section className={styles.features}>

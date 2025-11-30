@@ -172,6 +172,13 @@
   color: #b91c1c;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger-small:hover {
+  background: #fecaca;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.2);
+  transform: translateY(-1px);
 }
 
 .text-muted {

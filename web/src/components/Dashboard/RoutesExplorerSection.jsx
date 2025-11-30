@@ -40,20 +40,6 @@ function RoutesExplorerSection({ popularRoutes, allRoutes, showBackLink = false 
 
       <div className={styles.routesGroup}>
         <div className={styles.routesGroupHeader}>
-          <div>
-            <p className={styles.sectionTag}>🔥 Popular Routes</p>
-          </div>
-          <span className={styles.groupHint}>Updated daily</span>
-        </div>
-        <div className={styles.routesScroller}>
-          {popularRoutes.map((route) => (
-            <RouteCard key={`${route.from}-${route.to}`} {...route} />
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.routesGroup}>
-        <div className={styles.routesGroupHeader}>
           <h3>All Available Routes</h3>
           <span className={styles.groupHint}>
             {filteredRoutes.length} {filteredRoutes.length === 1 ? 'route' : 'routes'}
