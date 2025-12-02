@@ -8,10 +8,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    
+    // Don't make API call if no token exists
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await authAPI.getMe();
       setUser(response.data);
     } catch (error) {
+      // Token exists but is invalid/expired - clean it up
+      localStorage.removeItem("token");
       setUser(null);
     } finally {
       setLoading(false);
@@ -29,7 +40,6 @@ export const AuthProvider = ({ children }) => {
       await checkAuth();
       return response.data;
     } catch (error) {
-      // Ensure error is thrown for components to catch
       throw error;
     }
   };
@@ -41,7 +51,6 @@ export const AuthProvider = ({ children }) => {
       await checkAuth();
       return response.data;
     } catch (error) {
-      // Ensure error is thrown for components to catch
       throw error;
     }
   };
