@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -53,12 +54,13 @@ public class PayMongoController {
     public ResponseEntity<?> verifyPayment(@PathVariable String paymentIntentId) {
         try {
             Booking booking = payMongoService.handlePaymentSuccess(paymentIntentId);
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "bookingId", booking.getId(),
-                    "status", booking.getStatus().name(),
-                    "qrCodeText", booking.getQrCodeText()
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("bookingId", booking.getId());
+            response.put("status", booking.getStatus().name());
+            response.put("qrCodeText", booking.getQrCodeText());
+            response.put("booking", booking);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,

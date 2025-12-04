@@ -64,8 +64,11 @@ export const scheduleAPI = {
 
 // Seat API
 export const seatAPI = {
-  generate: (scheduleId, rows, cols) => 
-    api.post(`/seats/generate/${scheduleId}?rows=${rows}&cols=${cols}`),
+  generate: (scheduleId, rows, cols) => {
+    // Make rows and cols optional - backend auto-detects layout based on bus capacity
+    const params = rows && cols ? `?rows=${rows}&cols=${cols}` : '';
+    return api.post(`/seats/generate/${scheduleId}${params}`);
+  },
   getBySchedule: (scheduleId) => api.get(`/seats/schedule/${scheduleId}`)
 };
 

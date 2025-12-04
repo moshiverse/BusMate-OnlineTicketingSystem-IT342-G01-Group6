@@ -18,11 +18,10 @@ function RouteCard({
   const pillData = extras ?? extra ?? []
 
   const handleBookNow = () => {
-    if (rawSchedule) {
-      // Navigate directly to seat selection with schedule data
-      navigate('/booking', { state: { selectedSchedule: rawSchedule, step: 'seats' } })
+    // Navigate to booking page with route pre-selected
+    if (id) {
+      navigate('/booking', { state: { routeId: id } })
     } else {
-      // Fallback to booking page if no schedule info
       navigate('/booking')
     }
   }

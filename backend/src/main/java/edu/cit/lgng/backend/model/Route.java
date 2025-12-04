@@ -18,10 +18,8 @@ public class Route {
     private String destination;
 
     @Column(name = "distance_km")
-    @JsonProperty("distance")
     private Integer distanceKm;
 
     @Column(name = "duration_minutes")
-    @JsonProperty("duration")
     private Integer durationMinutes;
 }

@@ -118,47 +118,84 @@
 
 .bus-layout {
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 2rem 1.5rem;
   background: #fff;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .driver-section {
   text-align: center;
   font-weight: 600;
+  font-size: 1rem;
   color: #475569;
-  margin-bottom: 0.75rem;
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 2px dashed #cbd5e1;
 }
 
-.seat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.bus-seats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: center;
   gap: 0.5rem;
 }
 
+.seat-row.last-row {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 2px dashed #e2e8f0;
+}
+
+.aisle-gap {
+  width: 2rem;
+  min-width: 2rem;
+}
+
 .seat {
-  border: 1px solid rgba(15, 23, 42, 0.15);
+  border: 2px solid rgba(15, 23, 42, 0.15);
   border-radius: 0.65rem;
-  padding: 0.65rem 0;
+  padding: 0.75rem 0.85rem;
   background: #f8fafc;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: transform 0.15s ease, border 0.15s ease;
+  transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
+  min-width: 3.5rem;
+  text-align: center;
+}
+
+.seat.available {
+  background: #ecfdf5;
+  border-color: #34d399;
 }
 
 .seat.available:hover {
-  transform: translateY(-1px);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
 }
 
 .seat.selected {
   background: #155dfc;
   border-color: #155dfc;
   color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(21, 93, 252, 0.3);
 }
 
 .seat.reserved {
   background: #e2e8f0;
-  border-color: #cbd5f5;
+  border-color: #cbd5e1;
+  color: #94a3b8;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .selection-error {

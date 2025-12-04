@@ -35,7 +35,7 @@ function BookingPage({ onSignOut }) {
   const [routes, setRoutes] = useState([])
   const [schedules, setSchedules] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedRouteId, setSelectedRouteId] = useState('')
+  const [selectedRouteId, setSelectedRouteId] = useState(location.state?.routeId ? String(location.state.routeId) : '')
   const [travelDate, setTravelDate] = useState('')
   const [passengers, setPassengers] = useState(1)
   const [step, setStep] = useState(location.state?.step || 'list') // list | seats | confirm | processing | success
@@ -52,17 +52,21 @@ function BookingPage({ onSignOut }) {
       setStep('processing')
       
       paymongoAPI.verifyPayment(paymentIntentId)
-        .then(response => {
-          if (response.data.success) {
-            // Fetch the booking details to show in success page
+        .then(async response => {
+          if (response.data.success && response.data.booking) {
+            // Use the booking data from backend
+            const booking = response.data.booking
+            const schedule = booking.schedule || {}
+            const seats = booking.bookingSeats?.map(bs => bs.seatNumber) || []
+            
             setBookingResult({
-              bookingId: response.data.bookingId,
-              qrCode: response.data.qrCodeText,
+              bookingId: booking.id,
+              qrCode: booking.qrCodeText,
               referenceCode: paymentIntentId,
-              schedule: selectedSchedule || {}, // May be empty if page was refreshed
-              seats: selectedSeats.length ? selectedSeats : [],
-              amount: totalAmount || 0,
-              passengerName: user?.name,
+              schedule: schedule,
+              seats: seats,
+              amount: booking.amount || 0,
+              passengerName: booking.user?.name || user?.name,
             })
             setStep('success')
             // Clear the URL parameter without reload
@@ -243,7 +247,6 @@ function BookingPage({ onSignOut }) {
             <input
               type="number"
               min="1"
-              max="6"
               value={passengers}
               onChange={(e) => {
                 const next = Number(e.target.value)
@@ -251,7 +254,7 @@ function BookingPage({ onSignOut }) {
                   setPassengers(1)
                   return
                 }
-                setPassengers(Math.min(6, Math.max(1, next)))
+                setPassengers(Math.max(1, next))
               }}
             />
           </label>
@@ -280,7 +283,6 @@ function BookingPage({ onSignOut }) {
             schedule={selectedSchedule}
             onConfirm={handleSeatConfirm}
             onBack={() => setStep('list')}
-            maxSeats={passengers}
           />
         )}
 
