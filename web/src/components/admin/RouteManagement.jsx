@@ -64,8 +64,8 @@ const RouteManagement = () => {
     setFormData({
       origin: route.origin,
       destination: route.destination,
-      distanceKm: route.distanceKm?.toString() || '',
-      durationMinutes: route.durationMinutes?.toString() || ''
+      distanceKm: (route.distanceKm || route.distance)?.toString() || '',
+      durationMinutes: (route.durationMinutes || route.duration)?.toString() || ''
     });
     setEditingRoute(route);
     setShowForm(true);
@@ -184,8 +184,11 @@ const RouteManagement = () => {
         ) : (
           <div className="routes-cards-grid">
             {routes.map((route) => {
-              const hours = Math.floor(route.durationMinutes / 60);
-              const minutes = route.durationMinutes % 60;
+              // Handle both distanceKm and distance (backend uses @JsonProperty)
+              const distance = route.distanceKm || route.distance || 0;
+              const duration = route.durationMinutes || route.duration || 0;
+              const hours = Math.floor(duration / 60);
+              const minutes = duration % 60;
               const durationStr = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
               
               return (
@@ -215,7 +218,7 @@ const RouteManagement = () => {
                   <div className="route-card-details">
                     <div className="route-detail">
                       <p className="detail-label">Distance</p>
-                      <p className="detail-value">{route.distanceKm} km</p>
+                      <p className="detail-value">{distance} km</p>
                     </div>
                     <div className="route-detail">
                       <p className="detail-label">Duration</p>

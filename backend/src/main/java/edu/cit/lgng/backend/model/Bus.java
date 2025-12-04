@@ -19,7 +19,7 @@ public class Bus {
     @Column(name = "plate_no")
     private String plateNo;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "bus_type_id", nullable = false)
     private BusType busType;
 

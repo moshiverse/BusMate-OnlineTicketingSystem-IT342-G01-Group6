@@ -129,7 +129,6 @@ export const downloadTicketPDF = async (booking) => {
   doc.setFont('helvetica', 'normal');
   doc.text('PASSENGER NAME', 20, yPos);
   doc.text('SEAT(S)', pageWidth / 2 - 10, yPos);
-  doc.text('TOTAL AMOUNT', pageWidth - 50, yPos);
 
   yPos += 8;
   
@@ -142,10 +141,6 @@ export const downloadTicketPDF = async (booking) => {
   doc.setFont('helvetica', 'bold');
   doc.text(passengerName, 20, yPos);
   doc.text(seats, pageWidth / 2 - 10, yPos);
-  
-  doc.setTextColor(...primaryColor);
-  doc.setFontSize(12);
-  doc.text(amount, pageWidth - 50, yPos);
 
   yPos += 10;
 
@@ -159,8 +154,8 @@ export const downloadTicketPDF = async (booking) => {
 
   // QR Code Section
   const qrCodeText = booking.qrCodeText || bookingId;
-  const qrSize = 45;
-  const qrX = (pageWidth - qrSize) / 2;
+  const qrSize = 50;
+  const qrX = 45;
   
   // QR Code background
   doc.setFillColor(...lightGray);
@@ -192,7 +187,21 @@ export const downloadTicketPDF = async (booking) => {
   
   doc.setTextColor(...grayColor);
   doc.setFontSize(8);
-  doc.text('Scan for verification', pageWidth / 2, yPos + qrSize + 14, { align: 'center' });
+  doc.text('Scan for verification', qrX + qrSize / 2, yPos + qrSize + 14, { align: 'center' });
+  
+  // Total Amount to the right of QR
+  const amountX = qrX + qrSize + 30;
+  const amountY = yPos + 20;
+  
+  doc.setTextColor(...grayColor);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text('TOTAL AMOUNT', amountX, amountY);
+  
+  doc.setTextColor(...primaryColor);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text(amount, amountX, amountY + 12);
 
   // Verification code
   if (qrData.verificationCode) {

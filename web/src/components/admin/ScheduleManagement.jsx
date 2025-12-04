@@ -45,6 +45,18 @@ const ScheduleManagement = () => {
     }
   };
 
+  // Handle bus selection and auto-set available seats
+  const handleBusChange = (busId) => {
+    const selectedBus = buses.find(bus => bus.id === parseInt(busId));
+    const capacity = selectedBus?.busType?.capacity || 40;
+    
+    setFormData({
+      ...formData,
+      busId: busId,
+      availableSeats: capacity.toString()
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -60,15 +72,32 @@ const ScheduleManagement = () => {
 
       if (editingSchedule) {
         await scheduleAPI.update(editingSchedule.id, scheduleData);
+        alert('Schedule updated successfully!');
       } else {
         const response = await scheduleAPI.create(scheduleData);
-        await seatAPI.generate(response.data.id, 10, 4);
+        console.log('Schedule created:', response.data);
+        
+        // Auto-generate seats based on bus capacity (no need to pass rows/cols)
+        try {
+          const seatResponse = await seatAPI.generate(response.data.id);
+          console.log('Seats generated:', seatResponse.data);
+          alert(`Schedule created successfully! ${seatResponse.data.totalSeats || 'Seats'} generated.`);
+        } catch (seatError) {
+          console.error('Failed to generate seats:', seatError);
+          alert(`Schedule created but failed to generate seats: ${seatError.response?.data?.message || seatError.message}`);
+        }
       }
 
       resetForm();
       loadData();
     } catch (error) {
-      alert(error.response?.data || `Failed to ${editingSchedule ? 'update' : 'create'} schedule`);
+      const errorMsg = error.response?.data?.error 
+        || error.response?.data?.message 
+        || (typeof error.response?.data === 'string' ? error.response?.data : null)
+        || error.message 
+        || `Failed to ${editingSchedule ? 'update' : 'create'} schedule`;
+      alert(errorMsg);
+      console.error('Schedule error:', error);
     }
   };
 
@@ -174,14 +203,14 @@ const ScheduleManagement = () => {
                   <label>Bus</label>
                   <select
                     value={formData.busId}
-                    onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
+                    onChange={(e) => handleBusChange(e.target.value)}
                     required
                     className="form-select"
                   >
                     <option value="">Select Bus</option>
                     {buses.filter(bus => bus.status === 'ACTIVE').map(bus => (
                       <option key={bus.id} value={bus.id}>
-                        {bus.plateNumber} - {bus.busType?.name}
+                        Plate: {bus.plateNo} - {bus.busType?.name} ({bus.busType?.capacity} seats)
                       </option>
                     ))}
                   </select>
@@ -230,14 +259,17 @@ const ScheduleManagement = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Available Seats</label>
+                  <label>Available Seats (Auto-filled)</label>
                   <input
                     type="number"
-                    placeholder="Enter available seats"
                     value={formData.availableSeats}
-                    onChange={(e) => setFormData({ ...formData, availableSeats: e.target.value })}
-                    required
+                    readOnly
+                    className="form-input"
+                    style={{ backgroundColor: '#f1f5f9', cursor: 'not-allowed' }}
                   />
+                  <small style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+                    Automatically set based on selected bus capacity
+                  </small>
                 </div>
 
                 <div className="form-actions">
@@ -258,9 +290,25 @@ const ScheduleManagement = () => {
           ) : (
             <div className="schedules-cards-container">
               {schedules.map(schedule => {
-                const departureTime = new Date(schedule.departureTime);
-                const departureHours = String(departureTime.getHours()).padStart(2, '0');
-                const departureMinutes = String(departureTime.getMinutes()).padStart(2, '0');
+                // Parse departure time - backend sends as "HH:mm:ss" or "HH:mm"
+                let departureHours = '00';
+                let departureMinutes = '00';
+                
+                if (schedule.departureTime) {
+                  if (typeof schedule.departureTime === 'string') {
+                    // If it's a time string like "18:25:00"
+                    const timeParts = schedule.departureTime.split(':');
+                    departureHours = timeParts[0] || '00';
+                    departureMinutes = timeParts[1] || '00';
+                  } else {
+                    // If it's a Date object or timestamp
+                    const departureTime = new Date(schedule.departureTime);
+                    if (!isNaN(departureTime.getTime())) {
+                      departureHours = String(departureTime.getHours()).padStart(2, '0');
+                      departureMinutes = String(departureTime.getMinutes()).padStart(2, '0');
+                    }
+                  }
+                }
                 
                 return (
                   <div key={schedule.id} className="schedule-card">

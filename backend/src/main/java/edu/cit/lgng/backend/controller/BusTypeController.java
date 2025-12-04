@@ -1,7 +1,7 @@
 package edu.cit.lgng.backend.controller;
 
 import edu.cit.lgng.backend.model.BusType;
-import edu.cit.lgng.backend.repository.BusTypeRepository;
+import edu.cit.lgng.backend.service.BusTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,36 +11,29 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/api/bus-types")
 @RequiredArgsConstructor
 public class BusTypeController {
-    private final BusTypeRepository repo;
+    private final BusTypeService busTypeService;
 
     @GetMapping
     public List<BusType> getAll() {
-        return repo.findAll();
+        return busTypeService.getAll();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     @PostMapping
     public BusType create(@RequestBody BusType type) {
-        return repo.save(type);
+        return busTypeService.create(type);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public BusType update(@PathVariable Long id, @RequestBody BusType type) {
-        BusType existingType = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bus type not found"));
-        existingType.setName(type.getName());
-        existingType.setCapacity(type.getCapacity());
-        existingType.setDescription(type.getDescription());
-        return repo.save(existingType);
+        return busTypeService.update(id, type);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public void delete(@PathVariable Long id) {
-        BusType type = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bus type not found"));
-        repo.delete(type);
+        busTypeService.delete(id);
     }
 }
 

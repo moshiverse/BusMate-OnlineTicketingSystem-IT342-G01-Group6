@@ -17,6 +17,20 @@ const BusTypeManagement = () => {
     description: ''
   })
 
+  // Handle bus type selection and auto-set capacity
+  const handleBusTypeChange = (selectedType) => {
+    const capacityMap = {
+      'Standard': 41,
+      'Premium': 53
+    }
+    
+    setFormData({
+      ...formData,
+      name: selectedType,
+      capacity: capacityMap[selectedType].toString()
+    })
+  }
+
   useEffect(() => {
     loadTypes()
   }, [])
@@ -127,27 +141,31 @@ const BusTypeManagement = () => {
                 <h3>{editingType ? 'Edit Bus Type' : 'Add New Bus Type'}</h3>
 
                 <div className="form-group">
-                  <label>Type Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Standard, Premium, VIP"
+                  <label>Bus Type</label>
+                  <select
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => handleBusTypeChange(e.target.value)}
                     required
                     className="form-input"
-                  />
+                  >
+                    <option value="">Select Bus Type</option>
+                    <option value="Standard">Standard</option>
+                    <option value="Premium">Premium</option>
+                  </select>
                 </div>
 
                 <div className="form-group">
-                  <label>Capacity</label>
+                  <label>Capacity (Auto-set)</label>
                   <input
                     type="number"
-                    placeholder="e.g., 40"
                     value={formData.capacity}
-                    onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                    required
+                    readOnly
                     className="form-input"
+                    style={{ backgroundColor: '#f1f5f9', cursor: 'not-allowed' }}
                   />
+                  <small style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+                    Standard: 41 seats | Premium: 53 seats
+                  </small>
                 </div>
 
                 <div className="form-group">
