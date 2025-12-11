@@ -1,7 +1,7 @@
 # ================================
 # Stage 1: Build Spring Boot JAR
 # ================================
-FROM maven:3.9.2-eclipse-temurin-17 AS build
+FROM maven:3.9.2-eclipse-temurin-21 AS build
 
 # Set working directory
 WORKDIR /app
