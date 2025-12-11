@@ -12,11 +12,11 @@ const features = [
   },
   {
     title: 'Secure Payment Options',
-    description: 'Pay confidently with GoTyme and 256-bit encryption.',
+    description: 'Pay confidently with Paymongo and 256-bit encryption.',
   },
   {
-    title: 'Instant E-Tickets',
-    description: 'Receive QR-coded tickets straight to your inbox.',
+    title: 'Instant E-Tickets and PDF',
+    description: 'Receive QR-coded tickets and download to PDF.',
   },
 ]
 
@@ -54,7 +54,6 @@ function AuthPage({ onAuthenticated }) {
         </section>
         <section className={styles.authColumn}>
           <AuthPanel onAuthenticated={onAuthenticated} />
-          <QuickStartCard />
         </section>
       </div>
     </div>
