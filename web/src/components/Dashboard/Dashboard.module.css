@@ -226,6 +226,8 @@
 
 .heroContent {
   max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .heroBadge {
@@ -236,6 +238,8 @@
   border: 1px solid rgba(255, 255, 255, 0.35);
   margin-bottom: 1rem;
   font-weight: 500;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero h1 {
@@ -252,6 +256,7 @@
   margin-top: 1rem;
   font-size: 1.1rem;
   color: #e2e8f0;
+  text-align: center;
 }
 
 .heroCard {
