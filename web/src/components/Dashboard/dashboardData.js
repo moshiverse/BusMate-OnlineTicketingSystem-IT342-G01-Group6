@@ -120,11 +120,12 @@ export const tripsFallback = {
 export const footerLinks = [
   {
     title: 'Quick Links',
-    items: ['Book Tickets', 'My Bookings', 'Routes', 'Schedules'],
-  },
-  {
-    title: 'Support',
-    items: ['Help Center', 'Contact Us', 'FAQs', 'Terms & Conditions'],
+    items: [
+      { label: 'Book Tickets', to: '/booking' },
+      { label: 'My Bookings', to: '/my-bookings' },
+      { label: 'Routes', to: '/routes' },
+      { label: 'Schedules', to: '/schedules' },
+    ],
   },
 ]
 

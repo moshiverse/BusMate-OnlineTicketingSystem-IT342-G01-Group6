@@ -114,17 +114,13 @@ function BusMateLayout({ children, onSignOut }) {
             <h4>{column.title}</h4>
             <ul>
               {column.items.map((item) => (
-                <li key={item}>
-                  <a href="#">{item}</a>
+                <li key={item.label}>
+                  <Link to={item.to}>{item.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
         ))}
-        <div>
-          <h4>Payment Partners</h4>
-          <img src={paymentPartner} alt="GoTyme" />
-        </div>
         <div className={styles.copyright}>
           © 2025 BusMate. All rights reserved. Made with ❤️ for Filipino travelers.
         </div>
